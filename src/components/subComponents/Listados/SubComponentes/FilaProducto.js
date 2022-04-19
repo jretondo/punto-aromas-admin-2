@@ -149,7 +149,8 @@ const FilaProducto = ({
 
     const updatePriceCompra = async () => {
         const data = {
-            cost: newCompra
+            cost: newCompra,
+            globalName: item.global_name
         }
         await axios.put(`${UrlNodeServer.productsDir.sub.cost}/${item.id_prod}`, data, {
             headers: {
@@ -174,7 +175,7 @@ const FilaProducto = ({
         }).finally(() => {
             setTimeout(() => {
                 setCompraBool(false)
-                //setCall(!call)
+                setCall(!call)
             }, 1500);
         })
     }

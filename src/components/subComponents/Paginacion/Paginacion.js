@@ -16,11 +16,10 @@ const Paginacion = ({
     call,
     data
 }) => {
-
     useEffect(() => {
         ListarPaginas()
         // eslint-disable-next-line
-    }, [pagina, ultimaPag])
+    }, [pagina, ultimaPag, data.totalPag, data.cantTotal])
 
     const PagePrev = (e) => {
         e.preventDefault()

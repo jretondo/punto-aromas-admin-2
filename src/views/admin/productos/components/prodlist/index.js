@@ -69,6 +69,10 @@ const ProdList = ({
         // eslint-disable-next-line 
     }, [nvaOffer])
 
+    useEffect(() => {
+        setPagina(1)
+    }, [busquedaBool])
+
     const ListarProductos = async () => {
         setEsperar(true)
         let data = {

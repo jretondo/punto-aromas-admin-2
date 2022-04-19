@@ -22,6 +22,8 @@ const VariedadesProd = ({
             cod_barra: codBarra,
             variedad: variedad,
         }])
+        document.getElementById("precioVarTxt").focus()
+        document.getElementById("precioVarTxt").select()
     }
 
     useEffect(() => {
@@ -89,7 +91,7 @@ const VariedadesProd = ({
                                 >
                                     Variedad
                                 </label>
-                                <Input placeholder="Variedad..." style={{ fontSize: "25px" }} type="text" id="precioVtaTxt" value={variedad} onChange={e => setVariedad(e.target.value)} />
+                                <Input placeholder="Variedad..." style={{ fontSize: "25px" }} type="text" id="precioVarTxt" value={variedad} onChange={e => setVariedad(e.target.value)} />
                             </FormGroup>
                         </Col>
                         <Col md="6">
