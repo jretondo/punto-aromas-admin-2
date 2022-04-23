@@ -56,7 +56,7 @@ const Auth = () => {
             <div className="header-body text-center mb-7">
               <Row className="justify-content-center">
                 <Col lg="5" md="6">
-                  <img src={Brand2} alt="baitcast" style={{ width: "80%" }} />
+                  <img src={Brand2} alt="baitcast" style={{ width: "50%" }} />
                 </Col>
               </Row>
             </div>
