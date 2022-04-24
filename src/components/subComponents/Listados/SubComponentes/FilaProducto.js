@@ -16,6 +16,7 @@ import ModalMoverStock from './ModalMoverStock'
 import Button from 'reactstrap/lib/Button'
 import ModalChangeCodBarras from './ModalChangeCod'
 import ModalVerPrecios from './ModalVerPrecios'
+import ModalVarNueva from './ModalVarNueva'
 
 const FilaProducto = ({
     id,
@@ -47,6 +48,8 @@ const FilaProducto = ({
 
     const [compraBool, setCompraBool] = useState(false)
     const [newCompra, setNewCompra] = useState(item.precio_compra)
+
+    const [modal5, setModal5] = useState(false)
 
     const EliminarOff = async (e, id, name, primero, pagina) => {
         e.preventDefault()
@@ -180,6 +183,11 @@ const FilaProducto = ({
         })
     }
 
+    const addVarModal = (e) => {
+        e.preventDefault()
+        setModal5(true)
+    }
+
     useEffect(() => {
         if (compraBool) {
             setTimeout(() => {
@@ -299,6 +307,13 @@ const FilaProducto = ({
                                 <i className="fas fa-copy"></i>
                                 Copiar Producto
                             </DropdownItem>
+                            <DropdownItem
+                                href="#pablo"
+                                onClick={e => addVarModal(e, item.id_prod)}
+                            >
+                                <i className="fas fa-plus"></i>
+                                Agregar Variedad
+                            </DropdownItem>
                         </DropdownMenu>
                     </UncontrolledDropdown>
                 </td>
@@ -344,6 +359,13 @@ const FilaProducto = ({
                 modal={modal4}
                 setModal={setModal4}
                 item={item}
+            />
+            <ModalVarNueva
+                modal={modal5}
+                setModal={setModal5}
+                item={item}
+                setCall={setCall}
+                call={call}
             />
         </>
     )

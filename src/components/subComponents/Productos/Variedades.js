@@ -80,7 +80,7 @@ const VariedadesProd = ({
                 toggle={toggleModal1}
                 size={"lg"}
             >
-                <ModalHeader toggle={toggleModal1}>Nuevo Precio</ModalHeader>
+                <ModalHeader toggle={toggleModal1}>Nueva Variedad</ModalHeader>
                 <ModalBody>
                     <Row>
                         <Col md="6" >

@@ -184,14 +184,16 @@ const ModalNewStock = ({
                     const respuesta = res.data
                     const status = parseInt(respuesta.status)
                     if (status === 200) {
+                        setModal(false)
                         setActividadStr(`El usuario ha movido ${nvoStock} unidades del producto con ID ${item.id_prod} desde el PV ${ptoVtaOrigen.id} al punto ${ptoVtaDestino.id}`)
                         setNvaActCall(!nvaActCall)
                         setMsgStrong("Stock actualizado con éxito! ")
                         setMsgGralAlert("")
                         setSuccessAlert(true)
                         setAlertar(!alertar)
-                        setModal(false)
-                        setCall(!call)
+                        setTimeout(() => {
+                            setCall(!call)
+                        }, 500);
                     } else {
                         setMsgStrong("Hubo un error! ")
                         setMsgGralAlert("No se pudo eliminar el producto.")
@@ -278,7 +280,7 @@ const ModalNewStock = ({
                                                         onChange={e => setPtoVtaOrigen(JSON.parse(e.target.value))}
                                                         required
                                                     >
-                                                        <option value={{ id: 0 }}>Deposito</option>
+                                                        <option value={JSON.stringify({ id: 0 })}>Deposito</option>
                                                         {plantPtosVta}
                                                     </Input>
                                                 </FormGroup>
@@ -346,7 +348,7 @@ const ModalNewStock = ({
                                                         onChange={e => setPtoVtaDestino(JSON.parse(e.target.value))}
                                                         required
                                                     >
-                                                        <option value={{ id: 0 }}>Deposito</option>
+                                                        <option value={JSON.stringify({ id: 0 })}>Deposito</option>
                                                         {plantPtosVta}
                                                     </Input>
                                                 </FormGroup>

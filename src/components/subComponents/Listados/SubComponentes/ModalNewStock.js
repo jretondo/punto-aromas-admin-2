@@ -138,14 +138,16 @@ const ModalNewStock = ({
                 const respuesta = res.data
                 const status = parseInt(respuesta.status)
                 if (status === 200) {
+                    setModal(false)
                     setActividadStr("El usuario ha agregado " + nvoStock + " de stock al producto de ID " + item.id_prod + " en el PV " + ptoVta.id)
                     setNvaActCall(!nvaActCall)
                     setMsgStrong("Stock actualizado con éxito! ")
                     setMsgGralAlert("")
                     setSuccessAlert(true)
                     setAlertar(!alertar)
-                    setModal(false)
-                    setCall(!call)
+                    setTimeout(() => {
+                        setCall(!call)
+                    }, 500);
                 } else {
                     setMsgStrong("Hubo un error! ")
                     setMsgGralAlert("No se pudo eliminar el producto.")

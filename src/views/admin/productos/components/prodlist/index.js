@@ -42,7 +42,7 @@ const ProdList = ({
     const [varCostoBool, setVarCostoBool] = useState(false)
     const [aumento, setAumento] = useState(true)
     const [porc, setPorc] = useState("")
-    const [round, setRound] = useState(false)
+    const [round, setRound] = useState(0)
     const [roundBool, setRoundBool] = useState(false)
 
     useEffect(() => {
@@ -180,14 +180,14 @@ const ProdList = ({
                 query: palabraBuscada
             }
         }
-
+        console.log('round :>> ', round);
         const data = {
             aumento: aumento,
             porc: (porc / 100),
-            round: round,
-            roundBool: roundBool
+            round: parseFloat(round),
+            roundBool: Boolean(roundBool)
         }
-
+        console.log('data :>> ', data);
         await axios.post(`${UrlNodeServer.productsDir.sub.varCost}`, data, {
             params: query,
             headers: {
@@ -317,7 +317,7 @@ const ProdList = ({
                                                                 </Input> : null
                                                         }
                                                         <FormGroup check>
-                                                            <Input type="checkbox" id="roundTxt" checked={round} onChange={e => setRoundBool(e.target.checked)} />
+                                                            <Input type="checkbox" id="roundTxt" checked={roundBool} onChange={e => setRoundBool(e.target.checked)} />
                                                             {' '}
                                                             <Label check for="roundTxt">
                                                                 Redondear
