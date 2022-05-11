@@ -180,14 +180,12 @@ const ProdList = ({
                 query: palabraBuscada
             }
         }
-        console.log('round :>> ', round);
         const data = {
             aumento: aumento,
             porc: (porc / 100),
             round: parseFloat(round),
             roundBool: Boolean(roundBool)
         }
-        console.log('data :>> ', data);
         await axios.post(`${UrlNodeServer.productsDir.sub.varCost}`, data, {
             params: query,
             headers: {

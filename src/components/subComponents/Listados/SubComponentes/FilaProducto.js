@@ -17,6 +17,7 @@ import Button from 'reactstrap/lib/Button'
 import ModalChangeCodBarras from './ModalChangeCod'
 import ModalVerPrecios from './ModalVerPrecios'
 import ModalVarNueva from './ModalVarNueva'
+import ModalNewImg from './ModalNewImg'
 
 const FilaProducto = ({
     id,
@@ -45,6 +46,7 @@ const FilaProducto = ({
     const [modal2, setModal2] = useState(false)
     const [modal3, setModal3] = useState(false)
     const [modal4, setModal4] = useState(false)
+    const [modal6, setModal6] = useState(false)
 
     const [compraBool, setCompraBool] = useState(false)
     const [newCompra, setNewCompra] = useState(item.precio_compra)
@@ -103,13 +105,6 @@ const FilaProducto = ({
                         })
                 }
             });
-    }
-
-    const copiarDetalle = (e, id) => {
-        e.preventDefault()
-        setNvaOffer(true)
-        setIdDetalle(id)
-        setCopiarDet(true)
     }
 
     const VerDetalles = (e, id, globalName) => {
@@ -209,7 +204,10 @@ const FilaProducto = ({
                             <a
                                 className="avatar rounded-circle mr-3"
                                 href="#pablo"
-                                onClick={e => e.preventDefault()}
+                                onClick={e => {
+                                    e.preventDefault()
+                                    setModal6(true)
+                                }}
                             >
                                 <img
                                     alt="..."
@@ -302,13 +300,6 @@ const FilaProducto = ({
                             </DropdownItem>
                             <DropdownItem
                                 href="#pablo"
-                                onClick={e => copiarDetalle(e, item.id_prod)}
-                            >
-                                <i className="fas fa-copy"></i>
-                                Copiar Producto
-                            </DropdownItem>
-                            <DropdownItem
-                                href="#pablo"
                                 onClick={e => addVarModal(e, item.id_prod)}
                             >
                                 <i className="fas fa-plus"></i>
@@ -366,6 +357,11 @@ const FilaProducto = ({
                 item={item}
                 setCall={setCall}
                 call={call}
+            />
+            <ModalNewImg
+                modal={modal6}
+                setModal={setModal6}
+                item={item}
             />
         </>
     )

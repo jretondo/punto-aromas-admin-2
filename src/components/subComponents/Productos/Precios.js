@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Col, Modal, Row, ModalHeader, FormGroup, Input, Label, ModalBody, Form } from 'reactstrap';
+import swal from 'sweetalert';
 import ListadoTable from '../Listados/ListadoTable';
 import FilaPrecio from '../Listados/SubComponentes/FilaPrecio';
 
@@ -60,6 +61,34 @@ const PreciosProducto = ({
         document.getElementById("precioVtaTxt").select()
     }
 
+    const recalcular = () => {
+        if (listaPrecios.length > 0) {
+            let preciosNvos = []
+            // eslint-disable-next-line
+            listaPrecios.map((item, key) => {
+                let valueRound = 1
+                if (parseInt(item.round) > 0) {
+                    valueRound = parseInt(item.round)
+                }
+                const newPrice = (Math.round((costo * (1 + (item.percentage_sell / 100))) * (100 / valueRound))) / (100 / valueRound)
+                preciosNvos.push({
+                    type_price_name: item.type_price_name,
+                    percentage_sell: item.percentage_sell,
+                    sell_price: newPrice,
+                    min: item.min,
+                    round: item.round,
+                    roundBool: item.roundBool,
+                    buy_price: costo
+                })
+                if (key === listaPrecios.length - 1) {
+                    setListaPrecios(() => preciosNvos)
+                }
+            })
+        } else {
+            swal("Error!", "No hay precios listados para recalcular! Cargue nuevos precios de venta para p¡oder recalcular.", "error")
+        }
+    }
+
     useEffect(() => {
         calculoVta()
         // eslint-disable-next-line
@@ -112,6 +141,14 @@ const PreciosProducto = ({
                                     toggleModal2()
                                 }}
                             > Nuevo Precio</ Button>
+                            <Button
+                                color={"warning"}
+                                style={{ marginLeft: "15px" }}
+                                onClick={e => {
+                                    e.preventDefault()
+                                    recalcular()
+                                }}
+                            > Recalcular Precios</ Button>
                         </Row>
                     </Col>
                 </Row>

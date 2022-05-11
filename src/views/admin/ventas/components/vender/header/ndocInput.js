@@ -17,7 +17,8 @@ const NdocInput = ({
     ptoVta,
     setTfact,
     setCondIvaCli,
-    factFiscBool
+    factFiscBool,
+    colSize
 }) => {
     const Find = async () => {
         if (parseInt(tipoDoc) === 96) {
@@ -27,13 +28,53 @@ const NdocInput = ({
             } else {
                 setInvalidNdoc(false)
             }
+            await axios.get(`${UrlNodeServer.clientesDir.clientes}/${1}`, {
+                params: {
+                    search: ndoc,
+                    cantPerPage: 1
+                },
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('user-token')
+                }
+            })
+                .then(res => {
+                    const respuesta = res.data
+                    const status = parseInt(respuesta.status)
+                    if (status === 200) {
+                        const body = respuesta.body
+                        if (body.pagesObj.totalPag > 0) {
+                            const cliente = body.data[0]
+                            let tipoCliente = cliente.cuit
+                            if (tipoCliente === 0) {
+                                tipoCliente = 80
+                            }
+                            setTipoDoc(tipoCliente)
+                            setNdoc(cliente.ndoc)
+                            setRazSoc(cliente.razsoc)
+                            if (cliente.email.length > 0) {
+                                setEmailCliente(cliente.email)
+                                setEnvioEmailBool(1)
+                            }
+                        } else {
+                            setEmailCliente("")
+                            setEnvioEmailBool(0)
+                        }
+                    } else {
+                        setEmailCliente("")
+                        setEnvioEmailBool(0)
+                    }
+                })
+                .catch(() => {
+                    setEmailCliente("")
+                    setEnvioEmailBool(0)
+                })
         } else {
             const esCuit = verificadorCuit(ndoc).isCuit
             if (esCuit) {
                 setInvalidNdoc(false)
-                if (parseInt(factFiscBool) === 1) {
-                    await getDataFiscalClient()
-                }
+
+                await getDataFiscalClient()
+
                 await axios.get(`${UrlNodeServer.clientesDir.clientes}/${1}`, {
                     params: {
                         search: ndoc,
@@ -136,7 +177,7 @@ const NdocInput = ({
     }
 
     return (
-        <Col md="3">
+        <Col md={colSize}>
             <Label for="ndocTxt">{parseInt(tipoDoc) === 80 ? "Nº CUIT" : "Nº Doc."}</Label>
             <FormGroup>
                 <Input

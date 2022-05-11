@@ -85,7 +85,8 @@ const productsDir = {
         codBarra: products + "/codBarra",
         cost: products + "/cost",
         prices: products + "/prices",
-        var: products + "/var"
+        var: products + "/var",
+        images: products + "/images"
     }
 }
 
