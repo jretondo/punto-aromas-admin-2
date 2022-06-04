@@ -8,13 +8,9 @@ const PtosVtas = ({
     setPtoVtaList,
     ptoVtaList,
     ptoVta,
-    colSize
+    colSize,
+    setValidPV
 }) => {
-    useEffect(() => {
-        getPv()
-        // eslint-disable-next-line
-    }, [])
-
     const getPv = async () => {
         await axios.get(UrlNodeServer.ptosVtaDir.sub.userPv, {
             headers: {
@@ -27,11 +23,17 @@ const PtosVtas = ({
                 const status = parseInt(respuesta.status)
                 if (status === 200) {
                     const ptoVtaData = respuesta.body.data
+
                     setPtoVtaList(
                         ptoVtaData.map((item, key) => {
                             if (ptoVta.id === 0) {
                                 if (key === 0) {
                                     setPtoVta(item)
+                                }
+                            }
+                            if (key === 0) {
+                                if (setValidPV) {
+                                    setValidPV(item)
                                 }
                             }
                             return (
@@ -44,6 +46,11 @@ const PtosVtas = ({
                 }
             }).catch((error) => { console.log('error :>> ', error); })
     }
+
+    useEffect(() => {
+        getPv()
+        // eslint-disable-next-line
+    }, [])
 
     return (
         <Col md={colSize} >

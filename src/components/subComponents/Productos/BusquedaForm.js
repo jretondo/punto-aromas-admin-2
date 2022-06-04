@@ -38,6 +38,7 @@ const BusquedaProdForm = ({
                 BuscarPalabra()
             }
         }
+        // eslint-disable-next-line
     }, [palabraBuscada])
 
     useEffect(() => {

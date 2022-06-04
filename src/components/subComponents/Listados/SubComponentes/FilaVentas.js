@@ -2,25 +2,36 @@ import CompleteCerosLeft from '../../../../Function/CompleteCeroLeft';
 import formatMoney from 'Function/NumberFormat';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { DropdownItem, DropdownMenu, DropdownToggle, Spinner, UncontrolledDropdown } from 'reactstrap';
+import { DropdownItem, DropdownMenu, DropdownToggle, Spinner, UncontrolledDropdown, Button, Tooltip } from 'reactstrap';
 import { BsFileEarmarkPdfFill, BsTelegram, BsFillXCircleFill } from "react-icons/bs";
+import { FiRefreshCcw } from 'react-icons/fi';
 import axios from 'axios';
 import UrlNodeServer from '../../../../api/NodeServer';
 import swal from 'sweetalert';
 import { validateEmail } from 'Function/emailValidator';
 import FileSaver from 'file-saver';
+import ModalChangeType from './ModalChangeType';
 
 const FilaVentas = ({
     id,
-    item
+    item,
+    pagina,
+    setPagina,
+    setActualizar,
+    actualizar
 }) => {
+
+    console.log('item :>> ', item);
     const [wait, setWait] = useState(false)
     const [comprobante, setComprobante] = useState({
         pv: "00000",
         cbte: "00000000"
     })
+    const [tooltp, setTooltp] = useState(false)
+    const [modal1, setModal1] = useState(false)
 
-    const getFact = async (idFact, send) => {
+    const getFact = async (idFact, send, type) => {
+        console.log('type :>> ', type);
         let query = ""
         let seguir = true
         if (send) {
@@ -39,8 +50,12 @@ const FilaVentas = ({
         }
 
         if (seguir) {
+            let urlGet = UrlNodeServer.invoicesDir.sub.factDataPDF
+            if (type === -1) {
+                urlGet = UrlNodeServer.clientesDir.sub.payments
+            }
             setWait(true)
-            await axios.get(UrlNodeServer.invoicesDir.sub.factDataPDF + "/" + idFact + query, {
+            await axios.get(urlGet + "/" + idFact + query, {
                 responseType: 'arraybuffer',
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('user-token'),
@@ -107,6 +122,7 @@ const FilaVentas = ({
                     FileSaver.saveAs(blob, filename);
                     setWait(false)
                     swal("Anulación de Factura", "La factura ha sido eliminada con éxito!", "success");
+                    setActualizar(!actualizar)
                 })
                 .catch(error => {
                     setWait(false)
@@ -125,15 +141,24 @@ const FilaVentas = ({
         })
     }
 
+    const cambiarFormaPago = (e, item) => {
+        e.preventDefault()
+        setModal1(true)
+    }
+
+    const toggleToolTip = () => {
+        setTooltp(!tooltp)
+    }
+
     useEffect(() => {
         completarCeros()
         // eslint-disable-next-line
     }, [item.pv, item.cbte])
 
     return (
-        <tr key={id}>
+        <tr key={id} style={parseInt(item.id_fact_asoc) !== 0 ? { background: "#e8e8e8" } : {}}>
             <td style={{ textAlign: "center" }}>
-                {moment(item.fecha).format("DD/MM/YYYY")}
+                {moment(item.create_time).format("DD/MM/YYYY HH:mm") + " hs"}
             </td>
             <td style={{ textAlign: "center" }}>
                 {item.raz_soc_cliente === "" ? "Consumidor Final" : item.raz_soc_cliente} {parseInt(item.tipo_doc_cliente) === 80 ? "(CUIT: " + item.n_doc_cliente + ")" : parseInt(item.tipo_doc_cliente) === 96 ? "(DNI: " + item.n_doc_cliente + ")" : ""}
@@ -147,8 +172,16 @@ const FilaVentas = ({
                         parseInt(item.forma_pago) === 2 ? "Débito" :
                             parseInt(item.forma_pago) === 3 ? "Crédito" :
                                 parseInt(item.forma_pago) === 4 ? "Cuenta Corriente" :
-                                    "Transferencia"
+                                    "Varios Métodos"
                 }
+                <Button disabled={parseInt(item.id_fact_asoc) !== 0 || parseInt(item.forma_pago) === 5} style={{ borderRadius: "10%", marginInline: "10px" }} color={"info"} id={`buttonChange-${item.id}`}
+                    onClick={e => cambiarFormaPago(e, item)}
+                >
+                    <FiRefreshCcw />
+                </Button>
+                <Tooltip placement="right" isOpen={tooltp} target={`buttonChange-${item.id}`} toggle={toggleToolTip}>
+                    Cambiar Forma de Pago
+                </Tooltip>
             </td>
             <td style={{ textAlign: "center" }}>
                 $ {formatMoney(item.total_fact)}
@@ -175,7 +208,7 @@ const FilaVentas = ({
                                     href="#pablo"
                                     onClick={e => {
                                         e.preventDefault(e)
-                                        getFact(item.id, false)
+                                        getFact(item.id, false, parseFloat(item.t_fact))
                                     }}
                                 >
                                     <BsFileEarmarkPdfFill />
@@ -193,6 +226,7 @@ const FilaVentas = ({
                                 </DropdownItem>
                                 <DropdownItem
                                     href="#pablo"
+                                    disabled={parseInt(item.id_fact_asoc) !== 0 ? true : false}
                                     onClick={e => {
                                         e.preventDefault(e)
                                         anularFact(item.id)
@@ -201,11 +235,32 @@ const FilaVentas = ({
                                     <BsFillXCircleFill />
                                     Cancelar Factura
                                 </DropdownItem>
+                                {
+                                    parseInt(item.id_fact_asoc) !== 0 ?
+                                        <DropdownItem
+                                            href="#pablo"
+                                            onClick={e => {
+                                                e.preventDefault(e)
+                                                getFact(item.id_fact_asoc, false)
+                                            }}
+                                        >
+                                            <BsFileEarmarkPdfFill />
+                                            {parseInt(item.nota_cred) === 0 ? "Ver Nota de Crédito" : "Ver Factura Anulada"}
+                                        </DropdownItem>
+                                        : null
+                                }
                             </DropdownMenu>
                         </UncontrolledDropdown>
                 }
 
             </td>
+            <ModalChangeType
+                setModal={setModal1}
+                modal={modal1}
+                item={item}
+                pagina={pagina}
+                setPagina={setPagina}
+            />
         </tr>
     )
 }

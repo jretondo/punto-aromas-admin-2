@@ -13,15 +13,17 @@ import FileSaver from 'file-saver';
 const HeaderListaCaja = ({
     setListaCaja,
     pagina,
-    setLoading
+    setLoading,
+    actualizar
 }) => {
-    const hoy = (moment(new Date()).format("YYYY-MM-DD"))
+    const hoy1 = (moment(new Date()).format("YYYY-MM-DD"))
+    const hoy2 = (moment(new Date()).format("YYYY-MM-DD"))
     const [ptosVta, setPtoVta] = useState({ id: 0 })
     const [ptoVtaList, setPtoVtaList] = useState(<option>No hay puntos de venta relacionados</option>)
     const [user, setUser] = useState({ id: 0 })
     const [usersList, setUsersList] = useState(<option>No hay usuarios listados</option>)
-    const [desde, setDesde] = useState(hoy)
-    const [hasta, setHasta] = useState(hoy)
+    const [desde, setDesde] = useState(hoy1)
+    const [hasta, setHasta] = useState(hoy2)
     const [loadingPDF, setLoadingPDF] = useState(false)
 
     const getDataInvoices = async () => {
@@ -48,7 +50,6 @@ const HeaderListaCaja = ({
     }
 
     const printPDF = async () => {
-
         setLoadingPDF(true)
         const query = `?userId=${user.id}&ptoVta=${ptosVta.id}&desde=${moment(desde).format("YYYY-MM-DD")}&hasta=${moment(hasta).format("YYYY-MM-DD")}`
         await axios.get(UrlNodeServer.invoicesDir.sub.cajaListPDF + query, {
@@ -77,7 +78,7 @@ const HeaderListaCaja = ({
     useEffect(() => {
         getDataInvoices()
         // eslint-disable-next-line
-    }, [pagina])
+    }, [pagina, actualizar])
 
     return (
         <Form onSubmit={e => {
@@ -122,7 +123,7 @@ const HeaderListaCaja = ({
                                 id="desdeTxtCaja"
                                 value={hasta}
                                 onChange={e => setHasta(e.target.value)}
-                                max={hoy}
+                                min={desde}
                             />
                         </Col>
                     </Row>

@@ -35,14 +35,18 @@ const ModalNewStock = ({
     }, [])
 
     useEffect(() => {
-        StockActualListaOrigen()
+        if (modal) {
+            StockActualListaOrigen()
+        }
         // eslint-disable-next-line
-    }, [ptoVtaOrigen])
+    }, [ptoVtaOrigen, modal])
 
     useEffect(() => {
-        StockActualListaDestino()
+        if (modal) {
+            StockActualListaDestino()
+        }
         // eslint-disable-next-line
-    }, [ptoVtaDestino])
+    }, [ptoVtaDestino, modal])
 
     useEffect(() => {
         if (modal && !loading) {
@@ -98,6 +102,7 @@ const ModalNewStock = ({
     }
 
     const StockActualListaOrigen = async () => {
+        console.log('pasa origen:>> ');
         const query = `?idProd=${item.id_prod}&idPv=${ptoVtaOrigen.id}`
         await axios.get(`${UrlNodeServer.stockDir.stock}${query}`, {
             headers: {
@@ -119,6 +124,7 @@ const ModalNewStock = ({
     }
 
     const StockActualListaDestino = async () => {
+        console.log('pasa destino:>> ');
         const query = `?idProd=${item.id_prod}&idPv=${ptoVtaDestino.id}`
 
         await axios.get(`${UrlNodeServer.stockDir.stock}${query}`, {
@@ -184,13 +190,13 @@ const ModalNewStock = ({
                     const respuesta = res.data
                     const status = parseInt(respuesta.status)
                     if (status === 200) {
-                        setModal(false)
                         setActividadStr(`El usuario ha movido ${nvoStock} unidades del producto con ID ${item.id_prod} desde el PV ${ptoVtaOrigen.id} al punto ${ptoVtaDestino.id}`)
                         setNvaActCall(!nvaActCall)
                         setMsgStrong("Stock actualizado con éxito! ")
                         setMsgGralAlert("")
                         setSuccessAlert(true)
                         setAlertar(!alertar)
+                        setModal(false)
                         setTimeout(() => {
                             setCall(!call)
                         }, 500);

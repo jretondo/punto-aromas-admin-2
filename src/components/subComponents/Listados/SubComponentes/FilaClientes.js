@@ -27,7 +27,10 @@ const FilaProducto = ({
     setIdDetalle,
     primero,
     pagina,
-    setPagina
+    setPagina,
+    setVerCtaCteBool,
+    setIdCtaCte,
+    setNombreCtaCte
 }) => {
 
     const EliminarOff = async (e, id, name, primero, pagina) => {
@@ -77,7 +80,7 @@ const FilaProducto = ({
                         .catch(() => {
                             setEsperar(false)
                             setMsgStrong("Hubo un error!")
-                            setMsgGralAlert(" Intente nuevamente.")
+                            setMsgGralAlert(" Controle que el cliente no tenga nada cargado en su cuenta corriente")
                             setSuccessAlert(false)
                             setAlertar(!alertar)
                         })
@@ -91,13 +94,20 @@ const FilaProducto = ({
         setDetallesBool(true)
     }
 
+    const VerCtaCte = (e, id, name) => {
+        e.preventDefault()
+        setVerCtaCteBool(true)
+        setIdCtaCte(id)
+        setNombreCtaCte(name)
+    }
+
     return (
         <tr key={id}>
             <td style={{ textAlign: "center" }}>
                 {item.razsoc}
             </td>
             <td style={{ textAlign: "center" }}>
-                {parseInt(item.tipoDoc) === 0 ?
+                {parseInt(item.cuit) === 0 ?
                     "CUIT " + item.ndoc :
                     "DNI " + item.ndoc
                 }
@@ -109,9 +119,10 @@ const FilaProducto = ({
                 <a href={`mailto:${item.email}`}> {item.email}</a>
             </td>
             <td style={{ textAlign: "center" }}>
-                {item.condIva === 1 ?
-                    "Res. Inscripto" : item.cond_iva === 2 ?
-                        "Monotributista" : "Cons. Final"
+                {parseInt(item.cond_iva) === 1 ?
+                    "Res. Inscripto" : parseInt(item.cond_iva) === 6 ?
+                        "Monotributista" : parseInt(item.cond_iva) === 4 ?
+                            "Exento" : "Cons. Final"
                 }
             </td>
             <td className="text-right">
@@ -133,6 +144,13 @@ const FilaProducto = ({
                         >
                             <i className="fas fa-search"></i>
                             Ver detalles
+                        </DropdownItem>
+                        <DropdownItem
+                            href="#pablo"
+                            onClick={e => VerCtaCte(e, item.id, item.razsoc)}
+                        >
+                            <i className="fas fa-list"></i>
+                            Ver Cuenta Corriente
                         </DropdownItem>
                         <DropdownItem
                             href="#pablo"

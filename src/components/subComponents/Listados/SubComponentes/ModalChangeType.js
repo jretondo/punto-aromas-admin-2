@@ -15,23 +15,24 @@ import {
     Spinner
 } from 'reactstrap';
 import swal from 'sweetalert';
+import CompleteCerosLeft from 'Function/CompleteCeroLeft';
 
-const ModalChangeCodBarras = ({
+const ModalChangeType = ({
     setModal,
     modal,
     item,
-    setCall,
-    call
+    pagina,
+    setPagina
 }) => {
     const [loading, setLoading] = useState(false)
-    const [codBarra, setCodBarra] = useState("")
+    const [payType, setPayType] = useState(parseInt(item.forma_pago))
 
-    const asignarCod = async (id, cod) => {
+    const changePayType = async (id, typeId) => {
         const data = {
-            codBarras: cod
+            idType: typeId
         }
         setLoading(true)
-        await axios.put(UrlNodeServer.productsDir.sub.codBarra + "/" + id, data, {
+        await axios.put(UrlNodeServer.invoicesDir.sub.paytype + "/" + item.id, data, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('user-token')
             }
@@ -40,33 +41,33 @@ const ModalChangeCodBarras = ({
             const status = respuesta.status
             if (status === 200) {
                 const affectedRows = respuesta.body.affectedRows
-                console.log('affectedRows :>> ', affectedRows);
                 if (affectedRows > 0) {
-                    swal(`Cambios en ${item.name}!`, "Código de barras cambiado con éxito!", "success");
+                    swal(`Cambios en la factura`, "Forma de pago cambiada con éxito!", "success");
                 } else {
-                    swal(`Cambios en ${item.name}!`, "Hubo un error inesperado", "error");
+                    swal(`Cambios en factura`, "Hubo un error inesperado", "error");
                 }
             } else {
-                swal(`Cambios en ${item.name}!`, "Hubo un error inesperado", "error");
+                swal(`Cambios en factura`, "Hubo un error inesperado", "error");
             }
         }).catch((error) => {
-            swal(`Cambios en ${item.name}!`, "Hubo un error inesperado", "error");
+            swal(`Cambios en factura`, "Hubo un error inesperado", "error");
             console.log('error :>> ', error);
         }).finally(() => {
             setModal(false)
             setTimeout(() => {
-                setCall(!call)
+                const paginaConst = pagina
+                setPagina(parseInt(pagina) + 1)
+                setPagina(paginaConst)
             }, 1500);
             setLoading(false)
         })
-
     }
 
     useEffect(() => {
         if (modal) {
             try {
                 setTimeout(() => {
-                    document.getElementById("codbarraTxt").focus()
+                    document.getElementById("typelist").focus()
                 }, 500);
             } catch (error) {
                 console.log('error :>> ', error);
@@ -78,7 +79,7 @@ const ModalChangeCodBarras = ({
         <Modal isOpen={modal} toggle={() => setModal(!modal)} size="lg" >
             <Form onSubmit={e => {
                 e.preventDefault()
-                asignarCod(item.id_prod, codBarra)
+                changePayType(item.id_prod, payType)
             }}>
                 {
                     loading ?
@@ -88,13 +89,25 @@ const ModalChangeCodBarras = ({
                         </> :
                         <>
                             <ModalHeader toggle={() => setModal(!modal)}>
-                                <h3>Asignar Código de Barras</h3>
-                                <h2 style={{ color: "#0081c9" }}>{item.name}</h2>
+                                <h3>Cambiar forma de pago</h3>
+                                <h2 style={{ color: "#0081c9" }}>{item.letra} {CompleteCerosLeft(item.pv, 5)} - {CompleteCerosLeft(item.cbte, 8)}</h2>
                             </ModalHeader>
                             <ModalBody>
                                 <FormGroup>
-                                    <Label for="codbarraTxt">Útilice la lectora para leer el código</Label>
-                                    <Input value={codBarra} onChange={e => setCodBarra(e.target.value)} type="text" id="codbarraTxt" placeholder="Código de barras..." />
+                                    <Label for="factFiscTxt">Forma de Pago</Label>
+                                    <Input type="select" value={payType} id="typelist" onChange={e => setPayType(e.target.value)} >
+                                        <option value={0}>Efectivo</option>
+                                        {
+                                            parseInt(item.fiscal) === 1 ?
+                                                <>
+                                                    <option value={1}>Mercado Pago</option>
+                                                    <option value={2}>Débito</option>
+                                                    <option value={3}>Crédito</option>
+                                                </>
+                                                :
+                                                null
+                                        }
+                                    </Input>
                                 </FormGroup>
                             </ModalBody>
                             <ModalFooter>
@@ -125,4 +138,4 @@ const ModalChangeCodBarras = ({
     )
 }
 
-export default ModalChangeCodBarras
+export default ModalChangeType

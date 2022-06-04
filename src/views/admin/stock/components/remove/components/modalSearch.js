@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { Col, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row, Spinner } from 'reactstrap';
+import React, { useState } from 'react';
+import { Col, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row, Spinner } from 'reactstrap';
 import ListadoTable from 'components/subComponents/Listados/ListadoTable';
 import axios from 'axios';
-import UrlNodeServer from '../../../../../../api/NodeServer';
-import FilaProdSearch from 'components/subComponents/Listados/SubComponentes/filaPordSearch';
+import UrlNodeServer from 'api/NodeServer';
+import FilaProdSearch from 'components/subComponents/Listados/SubComponentes/filaPordSearch2';
 
 const ModalSearchProd = ({
     prodSearchModal,
     prodSearchToggle,
     setProdText,
-    findProd
+    setProdId
 }) => {
     const [dataFind, setDataFind] = useState("")
     const [loading, setLoading] = useState(false)
@@ -43,14 +43,15 @@ const ModalSearchProd = ({
                                         id={key}
                                         setProdText={setProdText}
                                         prodSearchToggle={prodSearchToggle}
-                                        findProd={findProd}
+                                        setProdId={setProdId}
                                     />)
                             })
                         )
                     } else {
-                        setlistaProd(<tr style={{ textAlign: "center", width: "100%" }}>
-                            <td> <span style={{ textAlign: "center", marginRight: "auto", marginLeft: "auto" }}> No hay productos encontrados</span></td>
-                        </tr>)
+                        setlistaProd(
+                            <tr style={{ textAlign: "center", width: "100%" }}>
+                                <td> <span style={{ textAlign: "center", marginRight: "auto", marginLeft: "auto" }}> No hay productos encontrados</span></td>
+                            </tr>)
                     }
                 }
             }).catch(() => {
@@ -60,52 +61,45 @@ const ModalSearchProd = ({
                 </tr>)
             })
     }
-    useEffect(() => {
-        setTimeout(() => {
-            try {
-                document.getElementById("dataFindTxt").select()
-            } catch (error) {
 
-            }
-        }, 500);
-    }, [prodSearchModal])
     return (
         <div>
             <Modal isOpen={prodSearchModal} toggle={prodSearchToggle} size="lg" >
                 <ModalHeader toggle={prodSearchToggle}>Buscar Cliente</ModalHeader>
                 <ModalBody>
-                    <Form onSubmit={e => {
-                        e.preventDefault();
-                        Find();
-                    }}>
-                        <Row>
-                            <Col md="10">
-                                <FormGroup>
-                                    <Label for="dataFindTxt">Producto</Label>
-                                    <Input
-                                        type="text"
-                                        id="dataFindTxt"
-                                        placeholder="Nombre, cod. de bara, proveedor, etc"
-                                        value={dataFind}
-                                        required
-                                        onChange={e => {
-                                            e.preventDefault();
-                                            setDataFind(e.target.value)
-                                        }}
-                                    />
-                                </FormGroup>
-                            </Col>
-                            <Col md="2">
-                                <button
-                                    className='btn btn-primary'
-                                    style={{ marginTop: "31px" }}
-                                    type='submit'
-                                >
-                                    Buscar
-                                </button>
-                            </Col>
-                        </Row>
-                    </Form>
+
+                    <Row>
+                        <Col md="10">
+                            <FormGroup>
+                                <Label for="dataFindTxt">Producto</Label>
+                                <Input
+                                    type="text"
+                                    id="dataFindTxt"
+                                    placeholder="Nombre, cod. de bara, proveedor, etc"
+                                    value={dataFind}
+                                    required
+                                    onChange={e => {
+                                        e.preventDefault();
+                                        setDataFind(e.target.value)
+                                    }}
+                                />
+                            </FormGroup>
+                        </Col>
+                        <Col md="2">
+                            <button
+                                className='btn btn-primary'
+                                style={{ marginTop: "31px" }}
+                                onClick={
+                                    e => {
+                                        e.preventDefault();
+                                        Find()
+                                    }
+                                }
+                            >
+                                Buscar
+                            </button>
+                        </Col>
+                    </Row>
                     {
                         loading ?
                             <div style={{ textAlign: "center" }}>

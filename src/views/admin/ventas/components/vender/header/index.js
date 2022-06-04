@@ -40,7 +40,10 @@ const InvoiceHeader = ({
     setInvalidNdoc,
     tfact,
     setTfact,
-    setCondIvaCli
+    setCondIvaCli,
+    setValidPV,
+    setModal1,
+    modal1
 }) => {
     const [ptoVtaList, setPtoVtaList] = useState(<option>No hay puntos de venta relacionados</option>)
     const [cbteStr, setCbteStr] = useState("")
@@ -122,6 +125,7 @@ const InvoiceHeader = ({
                                         ptoVtaList={ptoVtaList}
                                         ptoVta={ptoVta}
                                         colSize={6}
+                                        setValidPV={setValidPV}
                                     />
                                     <Col md="2" >
                                         <FormGroup>
@@ -232,20 +236,37 @@ const InvoiceHeader = ({
                             }
                         </Row>
                         <Row>
-                            <Col md="3" >
+                            <Col md={3} >
                                 <FormGroup>
                                     <Label for="factFiscTxt">Forma de Pago</Label>
-                                    <Input type="select" value={formaPago} id="factFiscTxt" onChange={e => setFormaPago(e.target.value)} >
-                                        <option value={0}>Efectivo</option>
-                                        <option value={1}>Mercado Pago</option>
-                                        <option value={2}>Débito</option>
-                                        <option value={3}>Crédito</option>
+                                    <Row>
+                                        <Col md={parseInt(formaPago) === 0 ? 8 : 12}>
+                                            <Input type="select" value={formaPago} id="factFiscTxt" onChange={e => setFormaPago(e.target.value)} >
+                                                <option value={0}>Efectivo</option>
+                                                {
+                                                    parseInt(factFiscBool) === 1 ?
+                                                        <>  <option value={1}>Mercado Pago</option>
+                                                            <option value={2}>Débito</option>
+                                                            <option value={3}>Crédito</option>
+                                                        </> : null
+                                                }
+                                                {
+                                                    parseInt(clienteBool) === 1 ?
+                                                        <option value={4}>Cuenta Corriente</option> :
+                                                        null
+                                                }
+                                                <option value={5}>Varios Métodos</option>
+                                            </Input>
+                                        </Col>
                                         {
-                                            parseInt(clienteBool) === 1 ?
-                                                <option value={4}>Cuenta Corriente</option> :
-                                                null
+                                            parseInt(formaPago) === 0 ?
+                                                <Col>
+                                                    <Button color={"success"} onClick={() => setModal1(!modal1)}>
+                                                        Cambio
+                                                    </Button>
+                                                </Col> : null
                                         }
-                                    </Input>
+                                    </Row>
                                 </FormGroup>
                             </Col>
                             <Col md="3" >
