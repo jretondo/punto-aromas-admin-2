@@ -22,11 +22,13 @@ const publicFolder = {
     prodImages
 }
 
+
+const products = host + "/products"
 const auth = host + "/auth"
 const routes = host + "/routes"
 const permissions = host + "/permissions"
 const ptosVta = host + "/ptosVta"
-const products = host + "/products"
+
 const proveedores = host + "/proveedores"
 const clientes = host + "/clientes"
 const revendedores = host + "/revendedores"
@@ -35,6 +37,23 @@ const usuarios = host + "/user"
 const stock = host + "/stock"
 const invoices = host + "/invoices"
 
+const productsDir = {
+    products,
+    sub: {
+        details: products + "/details",
+        variedades: products + "/varList",
+        tipos: products + "/getTipos",
+        marcas: products + "/getCat",
+        proveedores: products + "/getGetSubCat",
+        varCost: products + "/varCost",
+        changePorc: products + "/changePorc",
+        codBarra: products + "/codBarra",
+        cost: products + "/cost",
+        prices: products + "/prices",
+        var: products + "/var",
+        images: products + "/images"
+    }
+}
 const authDir = {
     auth
 }
@@ -45,7 +64,8 @@ const stockDir = {
         ultMov: stock + "/ultMov",
         moverStock: stock + "/moverStock",
         ultStockList: stock + "/ultStockList",
-        listaStock: stock + "/listaStock"
+        listaStock: stock + "/listaStock",
+        stockProd: stock + "/stockProd"
     }
 }
 
@@ -72,24 +92,6 @@ const ptosVtaDir = {
     }
 }
 
-const productsDir = {
-    products,
-    sub: {
-        details: products + "/details",
-        variedades: products + "/varList",
-        tipos: products + "/getTipos",
-        marcas: products + "/getCat",
-        proveedores: products + "/getGetSubCat",
-        varCost: products + "/varCost",
-        changePorc: products + "/changePorc",
-        codBarra: products + "/codBarra",
-        cost: products + "/cost",
-        prices: products + "/prices",
-        var: products + "/var",
-        images: products + "/images"
-    }
-}
-
 const proveedoresDir = {
     proveedores,
     sub: {
@@ -101,7 +103,9 @@ const clientesDir = {
     clientes,
     sub: {
         details: clientes + "/details",
-        dataFiscal: clientes + "/dataFiscal"
+        dataFiscal: clientes + "/dataFiscal",
+        ctaCte: clientes + "/ctaCte",
+        payments: clientes + "/payments"
     }
 }
 
@@ -128,7 +132,10 @@ const invoicesDir = {
         cajaList: invoices + "/cajaList",
         cajaListPDF: invoices + "/cajaListPDF",
         factDataPDF: invoices + "/factDataPDF",
-        notaCred: invoices + "/notaCred"
+        notaCred: invoices + "/notaCred",
+        paytype: invoices + "/paytype",
+        dummy: invoices + "/dummy",
+        timeout: invoices + "/timeout"
     }
 }
 
@@ -147,6 +154,7 @@ const routesDir = {
         userAdmin: routes + "/userAdmin"
     }
 }
+
 
 const UrlNodeServer = {
     publicFolder,
