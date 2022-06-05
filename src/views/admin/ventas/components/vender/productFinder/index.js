@@ -16,6 +16,7 @@ import productsSellContext from '../../../../../../context/productsSell';
 import Form from 'reactstrap/lib/Form';
 import isMobile from 'is-mobile';
 import ModalSearch from './modalSearch';
+import ModalPricesCant from './modalPricesCant';
 
 const ProductFinder = () => {
     const [result, setResult] = useState(null);
@@ -23,6 +24,7 @@ const ProductFinder = () => {
     const [cantProd, setCantProd] = useState(1)
     const [camera, setCamera] = useState(false);
     const [prodSearchModal, setProdSearchModal] = useState(false)
+    const [modalPrices, setModalPrices] = useState(false)
 
     const { NewProdSell, productsSellList, error } = useContext(productsSellContext)
 
@@ -30,7 +32,8 @@ const ProductFinder = () => {
 
     const findProd = (textFind) => {
         play()
-        NewProdSell(textFind, cantProd)
+        setModalPrices(true)
+        //NewProdSell(textFind, cantProd)
     }
 
     const onDetected = results => {
@@ -125,6 +128,14 @@ const ProductFinder = () => {
                 prodSearchToggle={prodSearchToggle}
                 setProdText={setProdText}
                 findProd={findProd}
+            />
+            <ModalPricesCant
+                text={prodText}
+                modal={modalPrices}
+                toggle={() => setModalPrices(!modalPrices)}
+                cantProd={cantProd}
+                setCantProd={setCantProd}
+
             />
         </>
     )

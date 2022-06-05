@@ -17,7 +17,7 @@ const ModalSearchProd = ({
         <td> <span style={{ textAlign: "center", marginRight: "auto", marginLeft: "auto" }}> No hay productos encontrados</span></td>
     </tr>)
 
-    const titulos = ["Producto", "Proveedor", "Marca", "Precio Final", ""]
+    const titulos = ["Producto", "Proveedor", "Marca", ""]
 
     const Find = async () => {
         setLoading(true)

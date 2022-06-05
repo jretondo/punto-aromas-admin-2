@@ -1,32 +1,26 @@
-import UrlNodeServer from 'api/NodeServer';
-import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ProdSellContext from './index';
 import React from 'react';
 import moment from 'moment';
+import swal from 'sweetalert';
 
 const ProdSellProvider = ({ children }) => {
     const [productsSellList, setProductsSellList] = useState([])
     const [totalPrecio, setTotalPrecio] = useState(0)
     const [error, setError] = useState()
 
-    const NewProdSell = async (text, cant) => {
+    const NewProdSell = async (data, cant, priceData) => {
         setError()
-        await axios.get(UrlNodeServer.productsDir.products + `/1?query=${text}&cantPerPage=1`, {
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('user-token')
-            }
-        })
-            .then(async res => {
-                const respuesta = res.data
-                const status = respuesta.status
-                if (status === 200) {
-                    const data = respuesta.body.data[0]
-                    data.cant_prod = cant
-                    data.key = (Math.random() * parseFloat(moment(new Date()).format("YYYYMMDDHHmmssms")))
-                    setProductsSellList(productsSellList => [...productsSellList, data])
-                }
-            }).catch((err) => { setError(err) })
+        if (productsSellList.length > 29) {
+            swal("Cantidad Máxima de Registros", "Por cuestiones de formato no se pueden registrar más de 30 productos diferentes. Se recomienda que genere esta factura y agregar otra más de ser necesario.", "error");
+        } else {
+            data.cant_prod = parseInt(cant)
+            data.key = (Math.random() * parseFloat(moment(new Date()).format("YYYYMMDDHHmmssms")))
+            data.id_price = priceData.id
+            data.vta_price = priceData.sell_price
+            setProductsSellList(productsSellList => [...productsSellList, data])
+
+        }
     }
 
     const RemoveProduct = (key) => {
@@ -39,6 +33,10 @@ const ProdSellProvider = ({ children }) => {
         setTotalPrecio(0)
         setError()
     }
+
+    useEffect(() => {
+        console.log('totalPrecio :>> ', totalPrecio);
+    }, [totalPrecio])
 
     return (
         <ProdSellContext.Provider value={{
