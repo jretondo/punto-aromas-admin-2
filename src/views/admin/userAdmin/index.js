@@ -9,6 +9,7 @@ import UserList from './list'
 import UserForm from './form'
 import { useActividad } from 'Hooks/UseNvaActividad'
 import UserPermissions from './permissions'
+import CtaCteListClientMod from './ctacte'
 
 const UserAdmin = () => {
     const [alertar, setAlertar] = useState(false)
@@ -27,6 +28,10 @@ const UserAdmin = () => {
 
     const [nvaActCall, setNvaActCall] = useState(false)
     const [actividadStr, setActividadStr] = useState("")
+
+    const [verCtaCteBool, setVerCtaCteBool] = useState(false)
+    const [idCtaCte, setIdCtaCte] = useState(0)
+    const [nombreCtaCte, setNombreCtaCte] = useState("")
 
     useActividad(
         nvaActCall,
@@ -77,28 +82,16 @@ const UserAdmin = () => {
                 <Header />
                 <Container className="mt--7" fluid>
                     {
-                        !nvaOffer ?
-                            <UserList
-                                alertar={alertar}
-                                setAlertar={setAlertar}
-                                setMsgStrong={setMsgStrong}
-                                setMsgGralAlert={setMsgGralAlert}
-                                setSuccessAlert={setSuccessAlert}
-                                nvaActCall={nvaActCall}
-                                setNvaActCall={setNvaActCall}
-                                setActividadStr={setActividadStr}
-                                nvaOffer={nvaOffer}
-                                setNvaOffer={setNvaOffer}
+                        verCtaCteBool ?
+                            <CtaCteListClientMod
+                                idCliente={idCtaCte}
+                                nombreCliente={nombreCtaCte}
+                                setVerCtaCteBool={setVerCtaCteBool}
                                 call={call}
                                 setCall={setCall}
-                                setDetBool={setDetBool}
-                                setIdDetalle={setIdDetalle}
-                                setPermisosBool={setPermisosBool}
-                                setIdPermisos={setIdPermisos}
-                                setUsuarioPermiso={setUsuarioPermiso}
                             /> :
-                            permisosBool ?
-                                <UserPermissions
+                            !nvaOffer ?
+                                <UserList
                                     alertar={alertar}
                                     setAlertar={setAlertar}
                                     setMsgStrong={setMsgStrong}
@@ -107,25 +100,49 @@ const UserAdmin = () => {
                                     nvaActCall={nvaActCall}
                                     setNvaActCall={setNvaActCall}
                                     setActividadStr={setActividadStr}
+                                    nvaOffer={nvaOffer}
                                     setNvaOffer={setNvaOffer}
-                                    idPermisos={idPermisos}
-                                    usuarioPermiso={usuarioPermiso}
-                                />
-                                :
-                                <UserForm
-                                    alertar={alertar}
-                                    setAlertar={setAlertar}
-                                    setMsgStrong={setMsgStrong}
-                                    setMsgGralAlert={setMsgGralAlert}
-                                    setSuccessAlert={setSuccessAlert}
-                                    nvaActCall={nvaActCall}
-                                    setNvaActCall={setNvaActCall}
-                                    setActividadStr={setActividadStr}
-                                    setNvaOffer={setNvaOffer}
-                                    idDetalle={idDetalle}
-                                    detBool={detBool}
-                                />
+                                    call={call}
+                                    setCall={setCall}
+                                    setDetBool={setDetBool}
+                                    setIdDetalle={setIdDetalle}
+                                    setPermisosBool={setPermisosBool}
+                                    setIdPermisos={setIdPermisos}
+                                    setUsuarioPermiso={setUsuarioPermiso}
+                                    setNombreCtaCte={setNombreCtaCte}
+                                    setVerCtaCteBool={setVerCtaCteBool}
+                                    setIdCtaCte={setIdCtaCte}
+                                /> :
+                                permisosBool ?
+                                    <UserPermissions
+                                        alertar={alertar}
+                                        setAlertar={setAlertar}
+                                        setMsgStrong={setMsgStrong}
+                                        setMsgGralAlert={setMsgGralAlert}
+                                        setSuccessAlert={setSuccessAlert}
+                                        nvaActCall={nvaActCall}
+                                        setNvaActCall={setNvaActCall}
+                                        setActividadStr={setActividadStr}
+                                        setNvaOffer={setNvaOffer}
+                                        idPermisos={idPermisos}
+                                        usuarioPermiso={usuarioPermiso}
+                                    />
+                                    :
+                                    <UserForm
+                                        alertar={alertar}
+                                        setAlertar={setAlertar}
+                                        setMsgStrong={setMsgStrong}
+                                        setMsgGralAlert={setMsgGralAlert}
+                                        setSuccessAlert={setSuccessAlert}
+                                        nvaActCall={nvaActCall}
+                                        setNvaActCall={setNvaActCall}
+                                        setActividadStr={setActividadStr}
+                                        setNvaOffer={setNvaOffer}
+                                        idDetalle={idDetalle}
+                                        detBool={detBool}
+                                    />
                     }
+
 
                 </Container>
             </>

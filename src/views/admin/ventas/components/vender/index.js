@@ -29,7 +29,7 @@ import FormasPagoMod from "./formasPago";
 const Ventas = ({
     setValidPV
 }) => {
-    const [clienteBool, setClienteBool] = useState(0)
+    const [clienteBool, setClienteBool] = useState(1)
     const [factFiscBool, setFactFiscBool] = useState(0)
     const [tipoDoc, setTipoDoc] = useState(80)
     const [ptoVta, setPtoVta] = useState({ id: 0 })
@@ -49,7 +49,7 @@ const Ventas = ({
 
     const [modal1, setModal1] = useState(false)
 
-    const { totalPrecio, cancelarCompra, productsSellList } = useContext(productsSellContext)
+    const { totalPrecio, cancelarCompra, productsSellList, totalRevende } = useContext(productsSellContext)
 
     const cancelar = () => {
         swal({
@@ -86,7 +86,8 @@ const Ventas = ({
                 descuentoPerc: descuentoPerc,
                 variosPagos: variosPagos
             },
-            fiscal: factFiscBool
+            fiscal: factFiscBool,
+            totalRevende: totalRevende
         }
         if (parseInt(formaPago) === 5 && parseFloat(total) !== parseFloat(totalPrecio)) {
             swal("Error: Total del pago!", "Revise que el total del pago debe ser igual al total de la factura.", "error");

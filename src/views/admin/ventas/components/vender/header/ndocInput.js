@@ -125,7 +125,6 @@ const NdocInput = ({
         }
     }
     const getDataFiscalClient = async () => {
-        console.log('pasa :>> ');
         const verifCuit = await verificadorCuit(ndoc)
         if (ptoVta.cert_file && ptoVta.key_file && verifCuit.isCuit) {
 

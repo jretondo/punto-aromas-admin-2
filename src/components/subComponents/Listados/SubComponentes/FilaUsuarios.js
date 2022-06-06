@@ -30,7 +30,10 @@ const FilaUsuario = ({
     setPagina,
     setPermisosBool,
     setIdPermisos,
-    setUsuarioPermiso
+    setUsuarioPermiso,
+    setVerCtaCteBool,
+    setIdCtaCte,
+    setNombreCtaCte,
 }) => {
 
     const EliminarOff = async (e, id, name, primero, pagina) => {
@@ -101,6 +104,13 @@ const FilaUsuario = ({
         setPermisosBool(true)
     }
 
+    const VerCtaCte = (e, id, name) => {
+        e.preventDefault()
+        setVerCtaCteBool(true)
+        setIdCtaCte(id)
+        setNombreCtaCte(name)
+    }
+
     return (
         <tr key={id}>
             <td style={{ textAlign: "center" }}>
@@ -131,6 +141,13 @@ const FilaUsuario = ({
                         >
                             <i className="fas fa-edit"></i>
                             Editar
+                        </DropdownItem>
+                        <DropdownItem
+                            href="#pablo"
+                            onClick={e => VerCtaCte(e, item.id, item.nombre + " " + item.apellido)}
+                        >
+                            <i className="fas fa-list"></i>
+                            Ver Cuenta Corriente
                         </DropdownItem>
                         <DropdownItem
                             href="#pablo"

@@ -66,7 +66,8 @@ const InvoiceHeader = ({
         if (parseInt(factFiscBool) === 0) {
             fiscalBool = ""
         }
-        let query = `?pvId=${ptoVta.id}&fiscal=${fiscalBool}&tipo=${tfact}&entorno=`
+        //TODO: Quitar ese atajo de tfact 11, solucionarlo de otra forma
+        let query = `?pvId=${ptoVta.id}&fiscal=${fiscalBool}&tipo=${11}&entorno=`
 
         await axios.get(UrlNodeServer.invoicesDir.sub.last + query, {
             headers: {
@@ -85,7 +86,7 @@ const InvoiceHeader = ({
             .catch(() => {
                 setNroCbte(1)
             })
-    }, [ptoVta.id, factFiscBool, tfact])
+    }, [ptoVta.id, factFiscBool])
 
 
     useEffect(() => {
@@ -243,13 +244,10 @@ const InvoiceHeader = ({
                                         <Col md={parseInt(formaPago) === 0 ? 8 : 12}>
                                             <Input type="select" value={formaPago} id="factFiscTxt" onChange={e => setFormaPago(e.target.value)} >
                                                 <option value={0}>Efectivo</option>
-                                                {
-                                                    parseInt(factFiscBool) === 1 ?
-                                                        <>  <option value={1}>Mercado Pago</option>
-                                                            <option value={2}>Débito</option>
-                                                            <option value={3}>Crédito</option>
-                                                        </> : null
-                                                }
+                                                <option value={1}>Mercado Pago</option>
+                                                <option value={2}>Débito</option>
+                                                <option value={3}>Crédito</option>
+                                                <option value={6}>Cheque</option>
                                                 {
                                                     parseInt(clienteBool) === 1 ?
                                                         <option value={4}>Cuenta Corriente</option> :

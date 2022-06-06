@@ -9,18 +9,21 @@ const titulos = ["Producto", "Cant.", "$/un.", "$ s/IVA", "%IVA", "$ Final", ""]
 const ProdListSell = () => {
     const [listProdVenta, setListProdVenta] = useState(<tr><td>No hay productos cargados aún</td></tr>)
 
-    const { productsSellList, setTotalPrecio } = useContext(productsSellContext)
+    const { productsSellList, setTotalPrecio, setTotalRevende } = useContext(productsSellContext)
 
     useEffect(() => {
         let lista = []
         lista = productsSellList
         if (lista.length > 0) {
             let total = 0
+            let totalrev = 0
             setListProdVenta(
                 lista.map((item, key) => {
                     total = total + (item.vta_price * item.cant_prod)
+                    totalrev = totalrev + (item.revendePrice * item.cant_prod)
                     if (key === lista.length - 1) {
                         setTotalPrecio(total)
+                        setTotalRevende(totalrev)
                     }
                     return (
                         <FilaProdSell
@@ -33,6 +36,7 @@ const ProdListSell = () => {
             )
         } else {
             setTotalPrecio(0)
+            setTotalRevende(0)
             setListProdVenta(<tr><td>No hay productos cargados aún</td></tr>)
         }
         // eslint-disable-next-line

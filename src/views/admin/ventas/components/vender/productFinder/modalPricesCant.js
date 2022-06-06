@@ -15,11 +15,10 @@ const ModalPricesCant = ({
     setCantProd
 }) => {
     const [listPrices, setListPrices] = useState(<tr><td>No hay precios asociados</td></tr>)
-
     const { NewProdSell } = useContext(productsSellContext)
 
-    const addProduct = (data, cant, idPrice) => {
-        NewProdSell(data, cant, idPrice)
+    const addProduct = (data, cant, idPrice, precioRevende) => {
+        NewProdSell(data, cant, idPrice, precioRevende)
         toggle()
     }
 
@@ -40,6 +39,13 @@ const ModalPricesCant = ({
                     } else if (prices.length === 1) {
                         addProduct(data, cantProd, prices[0].id)
                     } else {
+                        const revendePriceItem = prices.find(item => item.type_price_name === "REVENDEDOR")
+                        let precioRevende = 0
+                        if (revendePriceItem.sell_price) {
+                            precioRevende = revendePriceItem.sell_price
+                        } else {
+                            swal("Producto sin comisión!", "Este producto no posee precio de reventa! Lo que no dejará ninguna comisión!", "info")
+                        }
                         setListPrices(
                             // eslint-disable-next-line 
                             prices.map((item, key) => {
@@ -51,6 +57,7 @@ const ModalPricesCant = ({
                                         data={data}
                                         cant={cantProd}
                                         addToCart={addProduct}
+                                        precioRevende={precioRevende}
                                     />
                                 )
                             })

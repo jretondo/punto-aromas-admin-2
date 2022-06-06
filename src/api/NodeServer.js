@@ -73,7 +73,10 @@ const usuariosDir = {
     usuarios,
     sub: {
         details: usuarios + "/details",
-        mydata: usuarios + "/mydata"
+        mydata: usuarios + "/mydata",
+        sellers: usuarios + "/sellers",
+        ctaCte: usuarios + "/ctaCte",
+        payments: usuarios + "/payments",
     }
 }
 
@@ -105,7 +108,8 @@ const clientesDir = {
         details: clientes + "/details",
         dataFiscal: clientes + "/dataFiscal",
         ctaCte: clientes + "/ctaCte",
-        payments: clientes + "/payments"
+        payments: clientes + "/payments",
+        sellers: clientes + "/sellers"
     }
 }
 

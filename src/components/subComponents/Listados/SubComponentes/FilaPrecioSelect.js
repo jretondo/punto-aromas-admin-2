@@ -6,11 +6,12 @@ const FilaPrecioSelect = ({
     item,
     data,
     cant,
-    addToCart
+    addToCart,
+    precioRevende
 }) => {
 
     const SelectPrice = (dataItem) => {
-        addToCart(data, cant, dataItem)
+        addToCart(data, cant, dataItem, precioRevende)
     }
 
     return (

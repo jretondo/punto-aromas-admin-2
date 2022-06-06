@@ -7,9 +7,10 @@ import swal from 'sweetalert';
 const ProdSellProvider = ({ children }) => {
     const [productsSellList, setProductsSellList] = useState([])
     const [totalPrecio, setTotalPrecio] = useState(0)
+    const [totalRevende, setTotalRevende] = useState(0)
     const [error, setError] = useState()
 
-    const NewProdSell = async (data, cant, priceData) => {
+    const NewProdSell = async (data, cant, priceData, revendePrice) => {
         setError()
         if (productsSellList.length > 29) {
             swal("Cantidad Máxima de Registros", "Por cuestiones de formato no se pueden registrar más de 30 productos diferentes. Se recomienda que genere esta factura y agregar otra más de ser necesario.", "error");
@@ -18,6 +19,7 @@ const ProdSellProvider = ({ children }) => {
             data.key = (Math.random() * parseFloat(moment(new Date()).format("YYYYMMDDHHmmssms")))
             data.id_price = priceData.id
             data.vta_price = priceData.sell_price
+            data.revendePrice = revendePrice
             setProductsSellList(productsSellList => [...productsSellList, data])
 
         }
@@ -31,12 +33,13 @@ const ProdSellProvider = ({ children }) => {
     const cancelarCompra = () => {
         setProductsSellList([])
         setTotalPrecio(0)
+        setTotalRevende(0)
         setError()
     }
 
     useEffect(() => {
-        console.log('totalPrecio :>> ', totalPrecio);
-    }, [totalPrecio])
+        console.log('totalRevende :>> ', totalRevende);
+    }, [totalRevende])
 
     return (
         <ProdSellContext.Provider value={{
@@ -46,7 +49,9 @@ const ProdSellProvider = ({ children }) => {
             totalPrecio,
             error,
             cancelarCompra,
-            setTotalPrecio
+            setTotalPrecio,
+            totalRevende,
+            setTotalRevende
         }}>
             {children}
         </ProdSellContext.Provider>

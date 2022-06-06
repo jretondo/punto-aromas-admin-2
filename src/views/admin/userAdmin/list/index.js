@@ -26,7 +26,10 @@ const UserList = ({
     setIdDetalle,
     setPermisosBool,
     setIdPermisos,
-    setUsuarioPermiso
+    setUsuarioPermiso,
+    setVerCtaCteBool,
+    setNombreCtaCte,
+    setIdCtaCte,
 }) => {
     const [loading, setloading] = useState(false)
     const [listado, setListado] = useState([])
@@ -115,6 +118,9 @@ const UserList = ({
                                         setPermisosBool={setPermisosBool}
                                         setIdPermisos={setIdPermisos}
                                         setUsuarioPermiso={setUsuarioPermiso}
+                                        setVerCtaCteBool={setVerCtaCteBool}
+                                        setIdCtaCte={setIdCtaCte}
+                                        setNombreCtaCte={setNombreCtaCte}
                                     />
                                 )
                             })

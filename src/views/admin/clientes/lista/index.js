@@ -18,6 +18,8 @@ import {
     Label,
     Spinner
 } from "reactstrap"
+import ModalSellers from './modalSellers';
+import NdocInput from './ndocInput';
 
 const titulos = ["Razón Social", "Nº Doc.", "Telefóno", "Email", "Cond. IVA", ""]
 
@@ -29,12 +31,12 @@ const ListaClientesMod = ({
     setNvaActCall,
     setActividadStr,
     setVerCtaCteBool,
+    setNombreCtaCte,
     setIdCtaCte,
     call,
     setCall,
     nvaActCall,
     alertar,
-    setNombreCtaCte
 }) => {
     const [detallesBool, setDetallesBool] = useState(false)
     const [nvoProveedor, setNvoProveedor] = useState(false)
@@ -51,27 +53,22 @@ const ListaClientesMod = ({
     const [dataList, setDataList] = useState([])
 
     //FormProveedor Basic Info
-    const [nvoTipoDoc, setNvoTipoDoc] = useState(0)
+    const [nvoTipoDoc, setNvoTipoDoc] = useState(80)
     const [nvoDoc, setNvoDoc] = useState("")
     const [nvoRazSoc, setNvoRazSoc] = useState("")
     const [nvoTelefono, setNvoTelefono] = useState("")
     const [nvoEmail, setNvoEmail] = useState("")
     const [nvoCondIva, setNvoCondIva] = useState(0)
     const [idDetalle, setIdDetalle] = useState(0)
+    const [vendedorId, setVendedorId] = useState(null)
 
+    const [invalidNdoc, setInvalidNdoc] = useState(false)
+    const [ptoVta, setPtoVta] = useState({ id: 0 })
+    const [listaVendedores, setListaVendedores] = useState(<option value={null}>No hay vendedores para asignar</option>)
     const [esperar, setEsperar] = useState(false)
 
-    useEffect(() => {
-        ListaProveedores()
-        // eslint-disable-next-line
-    }, [call, pagina])
-
-    useEffect(() => {
-        if (detallesBool) {
-            DetallesProvFunc()
-        }
-        // eslint-disable-next-line
-    }, [detallesBool])
+    const [modalSellers, setModalSellers] = useState(false)
+    const [clienteSelect, setClienteSelect] = useState({})
 
     const NvoProv = (e) => {
         e.preventDefault()
@@ -88,7 +85,6 @@ const ListaClientesMod = ({
 
     const NvoProveedorForm = async (e, update) => {
         e.preventDefault()
-        setEsperar(true)
 
         const datos = {
             cuit: nvoTipoDoc,
@@ -98,46 +94,57 @@ const ListaClientesMod = ({
             email: nvoEmail,
             cond_iva: nvoCondIva
         }
+        if (vendedorId !== null) {
+            datos.vendedor_id = vendedorId
+        }
         if (update) {
             datos.id = idDetalle
         }
-        await axios.post(UrlNodeServer.clientesDir.clientes, datos, {
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('user-token')
-            }
-        })
-            .then(res => {
-                setEsperar(false)
-                const respuesta = res.data
-                const status = parseInt(respuesta.status)
-                if (status === 200) {
-                    if (update) {
-                        setActividadStr("El usuario ha modificado al cliente '" + nvoRazSoc + "'")
-                        setNvaActCall(!nvaActCall)
-                        setMsgStrong("Cliente modificado con éxito!")
+        if (invalidNdoc) {
+            setMsgStrong("Documento inválido!")
+            setMsgGralAlert("Controle el número de documento del cliente!")
+            setSuccessAlert(false)
+            setAlertar(!alertar)
+        } else {
+            setEsperar(true)
+            await axios.post(UrlNodeServer.clientesDir.clientes, datos, {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('user-token')
+                }
+            })
+                .then(res => {
+                    setEsperar(false)
+                    const respuesta = res.data
+                    const status = parseInt(respuesta.status)
+                    if (status === 200) {
+                        if (update) {
+                            setActividadStr("El usuario ha modificado al cliente '" + nvoRazSoc + "'")
+                            setNvaActCall(!nvaActCall)
+                            setMsgStrong("Cliente modificado con éxito!")
+                        } else {
+                            setActividadStr("El usuario ha agregado al cliente '" + nvoRazSoc + "'")
+                            setNvaActCall(!nvaActCall)
+                            setMsgStrong("Cliente agregado con éxito!")
+                        }
+                        setMsgGralAlert("")
+                        setSuccessAlert(true)
+                        setAlertar(!alertar)
+                        ResetForm()
                     } else {
-                        setActividadStr("El usuario ha agregado al cliente '" + nvoRazSoc + "'")
-                        setNvaActCall(!nvaActCall)
-                        setMsgStrong("Cliente agregado con éxito!")
+                        setMsgStrong("hubo un error! ")
+                        setMsgGralAlert("intente nuevamente")
+                        setSuccessAlert(false)
+                        setAlertar(!alertar)
                     }
-                    setMsgGralAlert("")
-                    setSuccessAlert(true)
-                    setAlertar(!alertar)
-                    ResetForm()
-                } else {
+                })
+                .catch(() => {
+                    setEsperar(false)
                     setMsgStrong("hubo un error! ")
                     setMsgGralAlert("intente nuevamente")
                     setSuccessAlert(false)
                     setAlertar(!alertar)
-                }
-            })
-            .catch(() => {
-                setEsperar(false)
-                setMsgStrong("hubo un error! ")
-                setMsgGralAlert("intente nuevamente")
-                setSuccessAlert(false)
-                setAlertar(!alertar)
-            })
+                })
+        }
     }
 
     const ListaProveedores = async () => {
@@ -194,6 +201,9 @@ const ListaClientesMod = ({
                                         setVerCtaCteBool={setVerCtaCteBool}
                                         setIdCtaCte={setIdCtaCte}
                                         setNombreCtaCte={setNombreCtaCte}
+                                        setClienteSelect={setClienteSelect}
+                                        toggleSellerAsign={() => setModalSellers(true)}
+                                        modal={modalSellers}
                                     />
                                 )
                             })
@@ -268,6 +278,66 @@ const ListaClientesMod = ({
             })
     }
 
+    const getPv = async () => {
+        await axios.get(UrlNodeServer.ptosVtaDir.sub.userPv, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('user-token')
+            }
+        })
+            .then(res => {
+                console.log('res :>> ', res);
+                const respuesta = res.data
+                const status = parseInt(respuesta.status)
+                if (status === 200) {
+                    const ptoVtaData = respuesta.body.data
+                    setPtoVta(ptoVtaData[0])
+                } else {
+
+                }
+            }).catch((error) => { console.log('error :>> ', error); })
+    }
+
+    const getVendedores = async () => {
+        await axios.get(UrlNodeServer.usuariosDir.sub.sellers, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('user-token')
+            }
+        }).then(res => {
+            const respuesta = res.data
+            const status = respuesta.status
+            if (status === 200) {
+                const sellerList = respuesta.body.data
+                if (sellerList.length > 0) {
+                    setListaVendedores(
+                        // eslint-disable-next-line
+                        sellerList.map((item, key) => {
+                            if (key === 0) {
+                                return (
+                                    <>
+                                        <option value={null} key={-1}>No asignar ningún vendedor</option>
+                                        <option value={item.id} key={key}>{`${item.nombre} ${item.apellido}`}</option>
+                                    </>
+                                )
+                            } else {
+                                return (
+                                    <>
+                                        <option value={item.id} key={key}>{`${item.nombre} ${item.apellido}`}</option>
+                                    </>
+                                )
+                            }
+                        })
+                    )
+                } else {
+                    setListaVendedores(<option value={null}>No hay vendedores para asignar</option>)
+                }
+            } else {
+                setListaVendedores(<option value={null}>No hay vendedores para asignar</option>)
+            }
+        }).catch(error => {
+            setListaVendedores(<option value={null}>No hay vendedores para asignar</option>)
+        })
+    }
+
     const ResetForm = () => {
         setNvoDoc("")
         setNvoTipoDoc(0)
@@ -276,6 +346,23 @@ const ListaClientesMod = ({
         setNvoEmail("")
         setNvoTelefono("")
     }
+
+    useEffect(() => {
+        ListaProveedores()
+        // eslint-disable-next-line
+    }, [call, pagina])
+
+    useEffect(() => {
+        if (detallesBool) {
+            DetallesProvFunc()
+        }
+        // eslint-disable-next-line
+    }, [detallesBool])
+    useEffect(() => {
+        getPv()
+        getVendedores()
+        // eslint-disable-next-line
+    }, [])
 
     return (
         <>
@@ -374,18 +461,60 @@ const ListaClientesMod = ({
                                                 Información del Cliente
                                             </h6>
                                             <Row>
-                                                <Col lg="12">
+                                                <Col lg="2">
+                                                    <FormGroup>
+                                                        <Label for="exampleSelect">Tipo. Doc.</Label>
+                                                        <Input type="select" onChange={e => setNvoTipoDoc(e.target.value)}>
+                                                            <option value={80}>CUIT</option>
+                                                            <option value={96}>DNI</option>
+                                                        </Input>
+                                                    </FormGroup>
+                                                </Col>
+                                                <NdocInput
+                                                    tipoDoc={nvoTipoDoc}
+                                                    ndoc={nvoDoc}
+                                                    setTipoDoc={setNvoTipoDoc}
+                                                    setNdoc={setNvoDoc}
+                                                    setRazSoc={setNvoRazSoc}
+                                                    setEmailCliente={setNvoEmail}
+                                                    invalidNdoc={invalidNdoc}
+                                                    setInvalidNdoc={setInvalidNdoc}
+                                                    ptoVta={ptoVta}
+                                                    setCondIvaCli={setNvoCondIva}
+                                                    colSize={6}
+                                                    setEsperar={setEsperar}
+                                                />
+                                                <Col lg="4">
+                                                    <FormGroup>
+                                                        <Label for="exampleSelect">Cond. IVA</Label>
+                                                        <Input type="select" value={nvoCondIva} onChange={e => setNvoCondIva(e.target.value)}>
+                                                            <option value={0}>Cons. Final</option>
+                                                            {
+                                                                parseInt(nvoTipoDoc) === 80 ?
+                                                                    <>  <option value={1}>Res. Inscripto</option>
+                                                                        <option value={4}>Exento</option>
+                                                                        <option value={6}>Monotributista</option></> : null
+                                                            }
+                                                        </Input>
+                                                    </FormGroup>
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col lg="6">
                                                     <FormGroup>
                                                         <label
                                                             className="form-control-label"
                                                             htmlFor="input-username"
                                                         >
-                                                            Razón Social
+                                                            {
+                                                                parseInt(nvoTipoDoc) === 80 ?
+                                                                    "Razón Social" : "Nombre Completo"
+                                                            }
                                                         </label>
                                                         <Input
                                                             className="form-control-alternative"
                                                             id="input-username"
-                                                            placeholder="Razón Social..."
+                                                            placeholder={parseInt(nvoTipoDoc) === 80 ? "Razón Social..." : "Nombre y Apellido..."}
                                                             type="text"
                                                             value={nvoRazSoc}
                                                             onChange={e => setNvoRazSoc(e.target.value)}
@@ -393,51 +522,13 @@ const ListaClientesMod = ({
                                                         />
                                                     </FormGroup>
                                                 </Col>
-                                            </Row>
-                                            <Row>
-                                                <Col lg="2">
+                                                <Col>
                                                     <FormGroup>
-                                                        <Label for="exampleSelect">Tipo. Doc.</Label>
-                                                        <Input type="select" onChange={e => setNvoTipoDoc(e.target.value)}>
-                                                            <option value={0}>CUIT</option>
-                                                            <option value={1}>DNI</option>
-                                                        </Input>
-                                                    </FormGroup>
-                                                </Col>
-                                                <Col lg="6">
-                                                    <FormGroup>
-                                                        <label
-                                                            className="form-control-label"
-                                                            htmlFor="input-username"
-                                                        >
-                                                            Nº Documento
-                                                        </label>
-                                                        <Input
-                                                            className="form-control-alternative"
-                                                            id="input-username"
-                                                            placeholder={
-                                                                parseInt(nvoTipoDoc) === 0 ?
-                                                                    "Nº de CUIT" :
-                                                                    "Nº de DNI"
-                                                            }
-                                                            type="text"
-                                                            value={nvoDoc}
-                                                            onChange={e => setNvoDoc(e.target.value)}
-                                                            required
-                                                        />
-                                                    </FormGroup>
-                                                </Col>
-                                                <Col lg="4">
-                                                    <FormGroup>
-                                                        <Label for="exampleSelect">Cond. IVA</Label>
-                                                        <Input type="select" onChange={e => setNvoCondIva(e.target.value)}>
-                                                            <option value={0}>Cons. Final</option>
-                                                            {
-                                                                parseInt(nvoTipoDoc) === 0 ?
-                                                                    <>  <option value={1}>Res. Inscripto</option>
-                                                                        <option value={4}>Exento</option>
-                                                                        <option value={6}>Monotributista</option></> : null
-                                                            }
+                                                        <Label>
+                                                            Vendedores
+                                                        </Label>
+                                                        <Input value={vendedorId} onChange={e => setVendedorId(e.target.value)} type="select" >
+                                                            {listaVendedores}
                                                         </Input>
                                                     </FormGroup>
                                                 </Col>
@@ -503,6 +594,12 @@ const ListaClientesMod = ({
                                 </Card>
                             </Col>
                         </Row>
+                        <ModalSellers
+                            modal={modalSellers}
+                            toggle={() => setModalSellers(!modalSellers)}
+                            clienteItem={clienteSelect}
+                            reload={() => setCall(!call)}
+                        />
                     </>
             }
         </>
