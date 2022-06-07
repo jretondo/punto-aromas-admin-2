@@ -47,6 +47,8 @@ const Ventas = ({
     const [variosPagos, setVariosPagos] = useState([])
     const [total, setTotal] = useState(0)
 
+    const [clienteData, setClienteData] = useState({ id: 0, price_default: "" })
+
     const [modal1, setModal1] = useState(false)
 
     const { totalPrecio, cancelarCompra, productsSellList, totalRevende } = useContext(productsSellContext)
@@ -206,11 +208,14 @@ const Ventas = ({
                                 setValidPV={setValidPV}
                                 setModal1={setModal1}
                                 modal1={modal1}
+                                setClienteData={setClienteData}
                             />
 
                             <br />
 
-                            <ProductFinder />
+                            <ProductFinder
+                                clienteData={clienteData}
+                            />
 
                             <ProdListSell />
                             <Row>

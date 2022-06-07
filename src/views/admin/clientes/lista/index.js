@@ -69,6 +69,9 @@ const ListaClientesMod = ({
 
     const [modalSellers, setModalSellers] = useState(false)
     const [clienteSelect, setClienteSelect] = useState({})
+    const [domicilio, setDomicilio] = useState("")
+    const [pricesType, setPricesType] = useState(<option value={null}>No hay tipos de precios en el listado de productos</option>)
+    const [priceDefault, setPriceDefault] = useState(null)
 
     const NvoProv = (e) => {
         e.preventDefault()
@@ -87,15 +90,19 @@ const ListaClientesMod = ({
         e.preventDefault()
 
         const datos = {
-            cuit: nvoTipoDoc,
+            cuit: parseInt(nvoTipoDoc) === 96 ? 1 : 0,
             ndoc: nvoDoc,
             razsoc: nvoRazSoc,
             telefono: nvoTelefono,
             email: nvoEmail,
-            cond_iva: nvoCondIva
+            cond_iva: nvoCondIva,
+            direccion: domicilio
         }
         if (vendedorId !== null) {
             datos.vendedor_id = vendedorId
+        }
+        if (priceDefault !== null) {
+            datos.price_default = priceDefault
         }
         if (update) {
             datos.id = idDetalle
@@ -256,12 +263,19 @@ const ListaClientesMod = ({
                 const status = parseInt(respuesta.status)
                 if (status === 200) {
                     const body = respuesta.body[0]
-                    setNvoTipoDoc(body.cuit)
+                    if (parseInt(body.cuit) === 1) {
+                        setNvoTipoDoc(96)
+                    } else {
+                        setNvoTipoDoc(80)
+                    }
                     setNvoDoc(body.ndoc)
                     setNvoRazSoc(body.razsoc)
                     setNvoTelefono(body.telefono)
                     setNvoEmail(body.email)
                     setNvoCondIva(body.cond_iva)
+                    setDomicilio(body.direccion)
+                    setVendedorId(body.vendedor_id)
+                    setPriceDefault(body.price_default)
                 } else {
                     setMsgStrong("Hubo un error! ")
                     setMsgGralAlert("Intente nuevamenete")
@@ -338,6 +352,51 @@ const ListaClientesMod = ({
         })
     }
 
+    const getPricesType = async () => {
+        await axios.get(UrlNodeServer.clientesDir.sub.pricesType, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('user-token')
+            }
+        }).then(res => {
+            const respuesta = res.data
+            const status = respuesta.status
+            if (status === 200) {
+                const data = respuesta.body
+                console.log('data :>> ', data);
+                if (data.length > 0) {
+                    let primero = 0
+                    setPricesType(
+                        // eslint-disable-next-line
+                        data.map((item, key) => {
+                            if (item.type_price_name.length > 3 && item.type_price_name !== "MAYORISTA") {
+                                primero = primero + 1
+                                if (primero === 1) {
+                                    return (
+                                        <>
+                                            <option value={null}>Sin precios por defecto</option>
+                                            <option key={key} value={item.type_price_name}>{item.type_price_name}</option>
+                                        </>
+                                    )
+                                } else {
+                                    return (
+                                        <option key={key} value={item.type_price_name}>{item.type_price_name}</option>
+                                    )
+                                }
+
+                            }
+                        })
+                    )
+                } else {
+                    setPricesType(<option value={null}>No hay tipos de precios en el listado de productos</option>)
+                }
+            } else {
+                setPricesType(<option value={null}>No hay tipos de precios en el listado de productos</option>)
+            }
+        }).catch(() => {
+            setPricesType(<option value={null}>No hay tipos de precios en el listado de productos</option>)
+        })
+    }
+
     const ResetForm = () => {
         setNvoDoc("")
         setNvoTipoDoc(0)
@@ -345,6 +404,9 @@ const ListaClientesMod = ({
         setNvoCondIva(0)
         setNvoEmail("")
         setNvoTelefono("")
+        setDomicilio("")
+        setPriceDefault(null)
+        setVendedorId(null)
     }
 
     useEffect(() => {
@@ -361,6 +423,7 @@ const ListaClientesMod = ({
     useEffect(() => {
         getPv()
         getVendedores()
+        getPricesType()
         // eslint-disable-next-line
     }, [])
 
@@ -464,7 +527,7 @@ const ListaClientesMod = ({
                                                 <Col lg="2">
                                                     <FormGroup>
                                                         <Label for="exampleSelect">Tipo. Doc.</Label>
-                                                        <Input type="select" onChange={e => setNvoTipoDoc(e.target.value)}>
+                                                        <Input type="select" value={nvoTipoDoc} onChange={e => setNvoTipoDoc(e.target.value)}>
                                                             <option value={80}>CUIT</option>
                                                             <option value={96}>DNI</option>
                                                         </Input>
@@ -483,6 +546,7 @@ const ListaClientesMod = ({
                                                     setCondIvaCli={setNvoCondIva}
                                                     colSize={6}
                                                     setEsperar={setEsperar}
+                                                    setDomicilio={setDomicilio}
                                                 />
                                                 <Col lg="4">
                                                     <FormGroup>
@@ -502,15 +566,15 @@ const ListaClientesMod = ({
                                             <Row>
                                                 <Col lg="6">
                                                     <FormGroup>
-                                                        <label
-                                                            className="form-control-label"
+                                                        <Label
+                                                            className="form-control-Label"
                                                             htmlFor="input-username"
                                                         >
                                                             {
                                                                 parseInt(nvoTipoDoc) === 80 ?
                                                                     "Razón Social" : "Nombre Completo"
                                                             }
-                                                        </label>
+                                                        </Label>
                                                         <Input
                                                             className="form-control-alternative"
                                                             id="input-username"
@@ -525,6 +589,16 @@ const ListaClientesMod = ({
                                                 <Col>
                                                     <FormGroup>
                                                         <Label>
+                                                            Dirección
+                                                        </Label>
+                                                        <Input value={domicilio} onChange={e => setDomicilio(e.target.value)} />
+                                                    </FormGroup>
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col>
+                                                    <FormGroup>
+                                                        <Label>
                                                             Vendedores
                                                         </Label>
                                                         <Input value={vendedorId} onChange={e => setVendedorId(e.target.value)} type="select" >
@@ -532,16 +606,27 @@ const ListaClientesMod = ({
                                                         </Input>
                                                     </FormGroup>
                                                 </Col>
+                                                <Col>
+                                                    <FormGroup>
+                                                        <Label>
+                                                            Precio por defecto
+                                                        </Label>
+                                                        <Input value={priceDefault} onChange={e => setPriceDefault(e.target.value)} type="select" >
+                                                            {pricesType}
+                                                        </Input>
+                                                    </FormGroup>
+                                                </Col>
                                             </Row>
+
                                             <Row>
                                                 <Col lg="8">
                                                     <FormGroup>
-                                                        <label
-                                                            className="form-control-label"
+                                                        <Label
+                                                            className="form-control-Label"
                                                             htmlFor="input-username"
                                                         >
                                                             Email
-                                                        </label>
+                                                        </Label>
                                                         <Input
                                                             className="form-control-alternative"
                                                             id="input-username"
@@ -555,12 +640,12 @@ const ListaClientesMod = ({
                                                 </Col>
                                                 <Col lg="4">
                                                     <FormGroup>
-                                                        <label
-                                                            className="form-control-label"
+                                                        <Label
+                                                            className="form-control-Label"
                                                             htmlFor="input-username"
                                                         >
                                                             Telefóno
-                                                        </label>
+                                                        </Label>
                                                         <Input
                                                             className="form-control-alternative"
                                                             id="input-username"

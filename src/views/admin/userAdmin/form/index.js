@@ -265,7 +265,6 @@ const UserForm = ({
                                             onChange={e => setPtoVtaSelect(e.target.value)}
                                             required
                                         >
-                                            <option value={0}>Deposito</option>
                                             {plantPtosVta}
                                         </Input>
                                     </FormGroup>

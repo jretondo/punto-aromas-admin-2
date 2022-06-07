@@ -18,7 +18,8 @@ const NdocInput = ({
     setTfact,
     setCondIvaCli,
     factFiscBool,
-    colSize
+    colSize,
+    setClienteData
 }) => {
     const Find = async () => {
         if (parseInt(tipoDoc) === 96) {
@@ -44,6 +45,7 @@ const NdocInput = ({
                         const body = respuesta.body
                         if (body.pagesObj.totalPag > 0) {
                             const cliente = body.data[0]
+                            setClienteData(cliente)
                             let tipoCliente = parseInt(cliente.cuit)
                             if (tipoCliente === 0) {
                                 tipoCliente = 80
@@ -59,15 +61,18 @@ const NdocInput = ({
                                 setEnvioEmailBool(1)
                             }
                         } else {
+                            setClienteData({ id: 0, price_default: "" })
                             setEmailCliente("")
                             setEnvioEmailBool(0)
                         }
                     } else {
+                        setClienteData({ id: 0, price_default: "" })
                         setEmailCliente("")
                         setEnvioEmailBool(0)
                     }
                 })
                 .catch(() => {
+                    setClienteData({ id: 0, price_default: "" })
                     setEmailCliente("")
                     setEnvioEmailBool(0)
                 })
@@ -95,6 +100,7 @@ const NdocInput = ({
                         const body = respuesta.body
                         if (body.pagesObj.totalPag > 0) {
                             const cliente = body.data[0]
+                            setClienteData(cliente)
                             let tipoCliente = parseInt(cliente.cuit)
                             if (tipoCliente === 0) {
                                 tipoCliente = 80
@@ -110,15 +116,18 @@ const NdocInput = ({
                                 setEnvioEmailBool(1)
                             }
                         } else {
+                            setClienteData({ id: 0, price_default: "" })
                             setEmailCliente("")
                             setEnvioEmailBool(0)
                         }
                     } else {
+                        setClienteData({ id: 0, price_default: "" })
                         setEmailCliente("")
                         setEnvioEmailBool(0)
                     }
                 })
                 .catch(() => {
+                    setClienteData({ id: 0, price_default: "" })
                     setEmailCliente("")
                     setEnvioEmailBool(0)
                 })

@@ -18,7 +18,7 @@ import isMobile from 'is-mobile';
 import ModalSearch from './modalSearch';
 import ModalPricesCant from './modalPricesCant';
 
-const ProductFinder = () => {
+const ProductFinder = ({ clienteData }) => {
     const [result, setResult] = useState(null);
     const [prodText, setProdText] = useState("")
     const [cantProd, setCantProd] = useState(1)
@@ -135,7 +135,7 @@ const ProductFinder = () => {
                 toggle={() => setModalPrices(!modalPrices)}
                 cantProd={cantProd}
                 setCantProd={setCantProd}
-
+                clienteData={clienteData}
             />
         </>
     )

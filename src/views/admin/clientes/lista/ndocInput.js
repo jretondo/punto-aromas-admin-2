@@ -14,7 +14,8 @@ const NdocInput = ({
     ptoVta,
     setCondIvaCli,
     colSize,
-    setEsperar
+    setEsperar,
+    setDomicilio
 }) => {
     const Find = async () => {
         if (parseInt(tipoDoc) === 96) {
@@ -49,6 +50,25 @@ const NdocInput = ({
                     const status = respuesta.status
                     if (status === 200) {
                         if (respuesta.body.status === 200) {
+                            if (respuesta.body.data.datosGenerales.domicilioFiscal) {
+                                //console.log('respuesta.body.data.datosGenerales.domicilioFiscal :>> ', respuesta.body.data.datosGenerales.domicilioFiscal);
+
+                                let direccion = ""
+                                let provincia = ""
+                                let localidad = ""
+                                if (respuesta.body.data.datosGenerales.domicilioFiscal.direccion) {
+                                    direccion = respuesta.body.data.datosGenerales.domicilioFiscal.direccion + " - "
+                                }
+                                if (respuesta.body.data.datosGenerales.domicilioFiscal.descripcionProvincia) {
+                                    provincia = respuesta.body.data.datosGenerales.domicilioFiscal.descripcionProvincia
+                                }
+                                if (respuesta.body.data.datosGenerales.domicilioFiscal.localidad) {
+                                    localidad = ((respuesta.body.data.datosGenerales.domicilioFiscal.localidad).replace("*", "")).trim() + " - "
+                                }
+
+                                setDomicilio(`${direccion}${localidad}${provincia}`)
+
+                            }
                             if (respuesta.body.data.datosMonotributo) {
                                 setRazSoc(respuesta.body.data.datosGenerales.nombre + " " + respuesta.body.data.datosGenerales.apellido)
                                 setCondIvaCli(6)
@@ -70,7 +90,8 @@ const NdocInput = ({
                         }
                     }
                 })
-                .catch(() => {
+                .catch((error) => {
+                    console.log('error :>> ', error);
                 }).finally(() => setEsperar(false))
 
         } else {

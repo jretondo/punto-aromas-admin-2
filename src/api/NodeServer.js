@@ -109,7 +109,8 @@ const clientesDir = {
         dataFiscal: clientes + "/dataFiscal",
         ctaCte: clientes + "/ctaCte",
         payments: clientes + "/payments",
-        sellers: clientes + "/sellers"
+        sellers: clientes + "/sellers",
+        pricesType: clientes + "/pricesType"
     }
 }
 

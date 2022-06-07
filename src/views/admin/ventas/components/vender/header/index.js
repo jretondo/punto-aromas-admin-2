@@ -43,7 +43,8 @@ const InvoiceHeader = ({
     setCondIvaCli,
     setValidPV,
     setModal1,
-    modal1
+    modal1,
+    setClienteData
 }) => {
     const [ptoVtaList, setPtoVtaList] = useState(<option>No hay puntos de venta relacionados</option>)
     const [cbteStr, setCbteStr] = useState("")
@@ -88,7 +89,10 @@ const InvoiceHeader = ({
             })
     }, [ptoVta.id, factFiscBool])
 
-
+    useEffect(() => {
+        setClienteData({ id: 0, price_default: "" })
+        // eslint-disable-next-line 
+    }, [factFiscBool, ndoc, tipoDoc])
     useEffect(() => {
         lastInvoice()
     }, [ptoVta, factFiscBool, lastInvoice])
@@ -211,6 +215,7 @@ const InvoiceHeader = ({
                                             setCondIvaCli={setCondIvaCli}
                                             factFiscBool={factFiscBool}
                                             colSize={3}
+                                            setClienteData={setClienteData}
                                         />
                                         <Col md="4">
                                             <Label for="razSocTxt">{parseInt(tipoDoc) === 80 ? "Raz. Soc." : "Nombre"}</Label>
