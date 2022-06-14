@@ -54,6 +54,7 @@ const VentasListMod = ({
                 <tr><td></td><td>No hay ventas con los filtros colocados</td></tr>
             )
         }
+        // eslint-disable-next-line
     }, [listaCaja])
 
     return (

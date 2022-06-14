@@ -20,7 +20,6 @@ const VentasListMod = ({
     const [listadoVentas, setListadoVentas] = useState(<tr><td></td><td>No hay ventas con los filtros colocados</td></tr>)
 
     useEffect(() => {
-        console.log('listaCaja.data :>> ', listaCaja.data);
         try {
             const data = listaCaja.data
             const pagesObj = listaCaja.pagesObj

@@ -122,6 +122,7 @@ const HeaderUltMovStock = ({
 
     useEffect(() => {
         getList()
+        // eslint-disable-next-line
     }, [pagina, moduleActive])
 
     return (

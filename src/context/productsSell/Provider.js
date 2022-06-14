@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import ProdSellContext from './index';
 import React from 'react';
 import moment from 'moment';
@@ -36,10 +36,6 @@ const ProdSellProvider = ({ children }) => {
         setTotalRevende(0)
         setError()
     }
-
-    useEffect(() => {
-        console.log('totalRevende :>> ', totalRevende);
-    }, [totalRevende])
 
     return (
         <ProdSellContext.Provider value={{

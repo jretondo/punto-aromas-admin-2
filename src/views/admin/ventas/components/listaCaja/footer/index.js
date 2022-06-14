@@ -22,6 +22,7 @@ const FooterListVentas = ({
             const totales = listaCaja.totales
             const totales2 = listaCaja.totales2
             if (totales2.length > 0) {
+                // eslint-disable-next-line
                 totales2.map((item) => {
                     switch (parseInt(item.tipo)) {
                         case 0:
@@ -45,6 +46,7 @@ const FooterListVentas = ({
                 })
             }
             if (totales.length > 0) {
+                // eslint-disable-next-line
                 totales.map((item) => {
                     switch (parseInt(item.forma_pago)) {
                         case 0:
