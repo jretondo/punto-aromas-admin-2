@@ -12,7 +12,8 @@ const ModalPricesCant = ({
     modal,
     toggle,
     cantProd,
-    clienteData
+    clienteData,
+    setCantProd
 }) => {
     const [listPrices, setListPrices] = useState(<tr><td>No hay precios asociados</td></tr>)
     const { NewProdSell } = useContext(productsSellContext)
@@ -92,6 +93,10 @@ const ModalPricesCant = ({
         // eslint-disable-next-line
     }, [modal, text])
 
+    useEffect(() => {
+        setCant(cantProd)
+    }, [cantProd])
+
     return (
         <Modal isOpen={modal} toggle={toggle}>
             <ModalHeader toggle={toggle}>
@@ -104,7 +109,10 @@ const ModalPricesCant = ({
                             <Label>
                                 Cantidad de Producto
                             </Label>
-                            <Input type="number" min={1} required value={cant} onChange={e => setCant(e.target.value)} />
+                            <Input type="number" min={1} required value={cant} onChange={e => {
+                                setCant(e.target.value)
+                                setCantProd(e.target.value)
+                            }} />
                         </FormGroup>
                     </Col>
                 </Row>
