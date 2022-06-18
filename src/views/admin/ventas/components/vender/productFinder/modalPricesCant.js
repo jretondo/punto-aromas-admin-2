@@ -66,7 +66,7 @@ const ModalPricesCant = ({
         setListPrices(
             // eslint-disable-next-line 
             prices.map((item, key) => {
-                if (clienteData.price_default === item.type_price_name) {
+                if (clienteData.price_default === item.type_price_name && item.type_price_name !== "") {
                     addProduct(dataProd, cant, item, revProd)
                     toggle()
                 }

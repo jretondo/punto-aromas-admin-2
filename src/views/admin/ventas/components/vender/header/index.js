@@ -17,6 +17,7 @@ import ModalSearchCuit from './modalSearchCuit';
 import NdocInput from './ndocInput';
 import PtosVtas from './ptosVta';
 import Form from 'reactstrap/lib/Form';
+import NameSearch from './nameSearch';
 const InvoiceHeader = ({
     setPtoVta,
     factFiscBool,
@@ -219,12 +220,15 @@ const InvoiceHeader = ({
                                         <Col md="4">
                                             <Label for="razSocTxt">{parseInt(tipoDoc) === 80 ? "Raz. Soc." : "Nombre"}</Label>
                                             <InputGroup>
-                                                <Input
-                                                    type="text"
-                                                    id="razSocTxt"
-                                                    value={razSoc}
-                                                    onChange={e => setRazSoc(e.target.value)}
-                                                    required
+                                                <NameSearch
+                                                    setTipoDoc={setTipoDoc}
+                                                    setNdoc={setNdoc}
+                                                    setRazSoc={setRazSoc}
+                                                    setEmailCliente={setEmailCliente}
+                                                    setEnvioEmailBool={setEnvioEmailBool}
+                                                    setInvalidNdoc={setInvalidNdoc}
+                                                    setClienteData={setClienteData}
+                                                    razSoc={razSoc}
                                                 />
                                                 < InputGroupAddon addonType="append">
                                                     <Button className="btn btn-info" onClick={(e) => {
