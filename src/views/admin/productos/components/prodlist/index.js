@@ -240,6 +240,7 @@ const ProdList = ({
                                     </Col>
                                     <Col md="8" style={{ textAlign: "right" }}>
                                         <BusquedaProdForm
+                                            setPage={setPagina}
                                             busquedaBool={busquedaBool}
                                             setPalabraBuscada={setPalabraBuscada}
                                             palabraBuscada={palabraBuscada}

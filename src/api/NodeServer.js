@@ -16,6 +16,9 @@ if (process.env.NODE_ENV === "development") {
     publicFiles = "https://api-prod.nekoadmin.com.ar/punto-aroma/static/"
 }
 
+host = "https://api-prod.nekoadmin.com.ar/punto-aroma/api"
+publicFiles = "https://api-prod.nekoadmin.com.ar/punto-aroma/static/"
+
 const prodImages = publicFiles + "/images/products/"
 
 const publicFolder = {

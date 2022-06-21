@@ -263,6 +263,8 @@ const Productos = () => {
             })
     }
 
+
+
     if (error) {
         return (
             <Redirect

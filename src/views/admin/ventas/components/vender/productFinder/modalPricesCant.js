@@ -38,13 +38,13 @@ const ModalPricesCant = ({
                 const status = respuesta.status
                 if (status === 200) {
                     const data = respuesta.body.data[0]
-                    const prices = respuesta.body.prices
-                    if (prices.length === 0) {
+                    const prices2 = respuesta.body.prices
+                    if (prices2.length === 0) {
                         swal("Error con los precios", "Este producto no tiene precios asociados! Controlelo.", "error")
-                    } else if (prices.length === 1) {
-                        addProduct(data, cant, prices[0].id)
+                    } else if (prices2.length === 1) {
+                        addProduct(data, cant, prices2[0].id)
                     } else {
-                        const revendePriceItem = prices.find(item => item.type_price_name === "REVENDEDOR")
+                        const revendePriceItem = prices2.find(item => item.type_price_name === "REVENDEDOR")
                         let precioRevende = 0
                         if (revendePriceItem.sell_price) {
                             precioRevende = revendePriceItem.sell_price
@@ -52,8 +52,12 @@ const ModalPricesCant = ({
                             swal("Producto sin comisión!", "Este producto no posee precio de reventa! Lo que no dejará ninguna comisión!", "info")
                         }
                         setDataProd(data)
-                        setPrices(prices)
+                        setPrices(prices2)
                         setRevProd(precioRevende)
+                        const price = prices2.filter(item => item.type_price_name === clienteData.price_default)
+                        if (price.length > 0) {
+                            addProduct(data, cant, price[0], precioRevende)
+                        }
                     }
                 } else {
                     swal("Error!", "Hubo un error. Controle que haya colocado un número válido!", "error");
@@ -67,10 +71,6 @@ const ModalPricesCant = ({
         setListPrices(
             // eslint-disable-next-line 
             prices.map((item, key) => {
-                if (clienteData.price_default === item.type_price_name && item.type_price_name !== "") {
-                    addProduct(dataProd, cant, item, revProd)
-                    toggle()
-                }
                 return (
                     <FilaPrecioSelect
                         key={key}

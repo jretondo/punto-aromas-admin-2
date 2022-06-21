@@ -444,6 +444,7 @@ const ListaClientesMod = ({
                                             </Col>
                                             <Col md="8" style={{ textAlign: "right" }}>
                                                 <BusquedaForm
+                                                    setPage={setPagina}
                                                     busquedaBool={busquedaBool}
                                                     setPalabraBuscada={setPalabraBuscada}
                                                     palabraBuscada={palabraBuscada}

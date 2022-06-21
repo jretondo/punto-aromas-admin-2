@@ -16,11 +16,13 @@ const BusquedaProdForm = ({
     setBusquedaBool,
     call,
     setCall,
-    titulo
+    titulo,
+    setPage
 }) => {
     const [primera, setPrimera] = useState(false)
 
     const BuscarPalabra = () => {
+        setPage(1)
         setBusquedaBool(true)
         setCall(!call)
     }

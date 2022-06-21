@@ -90,10 +90,6 @@ const InvoiceHeader = ({
     }, [ptoVta.id, factFiscBool])
 
     useEffect(() => {
-        setClienteData({ id: 0, price_default: "" })
-        // eslint-disable-next-line 
-    }, [factFiscBool, ndoc, tipoDoc])
-    useEffect(() => {
         lastInvoice()
     }, [ptoVta, factFiscBool, lastInvoice])
 

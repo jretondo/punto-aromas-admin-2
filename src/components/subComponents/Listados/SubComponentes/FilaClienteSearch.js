@@ -16,8 +16,6 @@ const FilaClientesSearch = ({
         setTipoDoc(i.cuit)
         setEmailCliente(i.email)
         setRazSoc(i.razsoc)
-        console.log(`i.email`, i.email)
-        console.log(`objeci.email.lengtht`, i.email.length)
         if (i.email.length > 0) {
             setEnvioEmailBool(1)
         } else {

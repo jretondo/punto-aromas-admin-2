@@ -61,7 +61,8 @@ const NameSearch = ({
                     setEnvioEmailBool(0)
                 }
             })
-            .catch(() => {
+            .catch((error) => {
+                console.log('error :>> ', error);
                 setClienteData({ id: 0, price_default: "" })
                 setEmailCliente("")
                 setEnvioEmailBool(0)
@@ -85,6 +86,7 @@ const NameSearch = ({
                     value={razSoc}
                     onChange={e => setRazSoc(e.target.value)}
                     onKeyPress={keyenterPress}
+                    onBlur={Find}
                     required
                 />}
         </>

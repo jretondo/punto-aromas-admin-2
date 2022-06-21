@@ -231,10 +231,10 @@ const ModalNewStock = ({
                         </> :
                         <>
                             <ModalHeader toggle={() => setModal(!modal)}>
-                                <h3>Mover Stock</h3>
-                                <h2>{item.name}</h2>
+                                Mover Stock
                             </ModalHeader>
                             <ModalBody>
+                                <h2>{item.name}</h2>
                                 <Row>
                                     <Col md="4" >
                                         <FormGroup>

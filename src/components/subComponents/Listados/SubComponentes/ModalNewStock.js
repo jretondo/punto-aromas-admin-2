@@ -1,10 +1,8 @@
 import UrlNodeServer from '../../../../api/NodeServer'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { Col, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row, Spinner } from 'reactstrap'
-import formatMoney from 'Function/NumberFormat'
-import BtnDisabled from '../../../../assets/img/icons/btn-disabled.png'
-import BtnEnabled from '../../../../assets/img/icons/btn-enabled.png'
+import { Col, Form, FormGroup, Input, Modal, ModalBody, ModalFooter, ModalHeader, Row, Spinner } from 'reactstrap'
+
 const ModalNewStock = ({
     modal,
     setModal,
@@ -31,11 +29,6 @@ const ModalNewStock = ({
     const [venta, setVenta] = useState(item.porc_minor)
     const [roundBool, setRoundBool] = useState(parseInt(item.round) > 0 ? true : false)
     const [round, setRound] = useState(parseInt(item.round) > 0 ? parseInt(item.round) : 100)
-    const [costoIva, setCostoIva] = useState(item.iva)
-    const [precioVta, setPrecioVta] = useState(item.vta_price)
-    const [vetaStr, setVentaStr] = useState("")
-    const [porcStr, setPorcStr] = useState("")
-    const [vtaFijaBool, setVtaFijaBool] = useState(parseInt(item.vta_fija) === 0 ? false : true)
 
     useEffect(() => {
         ListaPV()
@@ -47,29 +40,6 @@ const ModalNewStock = ({
         ListaPV()
         // eslint-disable-next-line
     }, [modal])
-
-    useEffect(() => {
-        if (!vtaFijaBool) {
-            calculoVta()
-        }
-        // eslint-disable-next-line
-    }, [roundBool, round, costo, venta, vtaFijaBool])
-
-    useEffect(() => {
-        if (vtaFijaBool) {
-            calculoPorc()
-        }
-        // eslint-disable-next-line
-    }, [costo, precioVta, vtaFijaBool])
-
-    useEffect(() => {
-        if (roundBool) {
-            setRound(100)
-        } else {
-            setRound(0)
-        }
-        // eslint-disable-next-line
-    }, [roundBool])
 
     useEffect(() => {
         if (modal) {
@@ -100,54 +70,6 @@ const ModalNewStock = ({
         }, 200);
     }
 
-    const calculoVta = () => {
-        if (costo > 0 && venta > 0) {
-            if (roundBool) {
-                const costoConIva = formatMoney(costo * ((item.iva / 100) + 1))
-                let ventaFinal = (costo * ((item.iva / 100) + 1) * ((venta / 100) + 1))
-                ventaFinal = ventaFinal * 100
-                ventaFinal = parseInt(Math.round(ventaFinal / round))
-                ventaFinal = ventaFinal / 100
-                ventaFinal = (ventaFinal * round)
-                setPrecioVta(ventaFinal)
-                ventaFinal = formatMoney(ventaFinal, 2)
-                setVentaStr("$ " + ventaFinal)
-                setCostoIva("$ " + costoConIva)
-            } else {
-                const costoConIva = formatMoney(costo * ((item.iva / 100) + 1))
-                let ventaFinal = (costo * ((item.iva / 100) + 1)) * ((venta / 100) + 1)
-                ventaFinal = Math.round(ventaFinal * 100)
-                ventaFinal = ventaFinal / 100
-                setPrecioVta(ventaFinal)
-                ventaFinal = formatMoney(ventaFinal, 2)
-                setCostoIva("$ " + costoConIva)
-                setVentaStr("$ " + ventaFinal)
-            }
-        } else {
-            setVentaStr("")
-            setCostoIva("")
-            setPrecioVta(0)
-        }
-    }
-
-    const calculoPorc = () => {
-        if (costo > 0 && precioVta > 0) {
-            const costoConIva = formatMoney(costo * ((item.iva / 100) + 1))
-            setRoundBool(false)
-            setRound(0)
-            let costoCalc = (((precioVta) / (costo * ((item.iva / 100) + 1))) - 1) * 100
-            costoCalc = Math.round(costoCalc * 100)
-            costoCalc = costoCalc / 100
-            setVenta(costoCalc)
-            costoCalc = formatMoney(costoCalc)
-            setPorcStr(costoCalc + "%")
-            setCostoIva("$ " + costoConIva)
-        } else {
-            setPorcStr("")
-            setCostoIva("")
-            setVenta("")
-        }
-    }
 
     const ListaPV = async () => {
         setLoading(true)
@@ -212,8 +134,8 @@ const ModalNewStock = ({
             obs: "Nuevo Stock",
             costo: costo,
             iva: item.iva,
-            vta_fija: vtaFijaBool,
-            vta_price: precioVta,
+            vta_fija: item.vta_fija,
+            vta_price: item.vta_price,
             round: roundBool ? round : 0,
             porc_minor: venta,
             precio_compra: costo
@@ -264,14 +186,6 @@ const ModalNewStock = ({
         setVenta(item.porc_minor)
         setRoundBool(parseInt(item.round) > 0 ? true : false)
         setRound(parseInt(item.round) > 0 ? parseInt(item.round) : 100)
-        setCostoIva("")
-        setPrecioVta(item.vta_price)
-        setVtaFijaBool(parseInt(item.vta_fija) === 0 ? false : true)
-        if (parseInt(item.vta_fija) === 0) {
-            calculoVta()
-        } else {
-            calculoPorc()
-        }
     }
 
     return (
