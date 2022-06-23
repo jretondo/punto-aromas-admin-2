@@ -105,12 +105,18 @@ const FooterListVentas = ({
                         colSize={4}
                     />
                 }
+                const costoRow = <TotalItemsVtas
+                    totalId={-1}
+                    totalImporte={listaCaja.totalCosto}
+                    colSize={4}
+                />
                 setTotalesPlant(<>
                     {efectivoRow}
                     {mercadoPagoRow}
                     {debitoRow}
                     {creditoRow}
                     {ctacteRow}
+                    {costoRow}
                 </>)
             } else {
                 setTotalesPlant(

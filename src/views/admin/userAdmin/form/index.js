@@ -142,6 +142,9 @@ const UserForm = ({
 
                     setPlantPtosVta(
                         resultado.map((item, key) => {
+                            if (key === 0) {
+                                setPtoVtaSelect(item.pv)
+                            }
                             return (
                                 <option key={key} value={item.pv}>{item.direccion + " (PV: " + item.pv + ")"}</option>
                             )
