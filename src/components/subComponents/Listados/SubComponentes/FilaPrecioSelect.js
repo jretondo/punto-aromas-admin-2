@@ -7,11 +7,18 @@ const FilaPrecioSelect = ({
     data,
     cant,
     addToCart,
-    precioRevende
+    precioRevende,
+    modifyPrice,
+    toggle
 }) => {
 
     const SelectPrice = (dataItem) => {
-        addToCart(data, cant, dataItem, precioRevende)
+        if (modifyPrice) {
+            modifyPrice(data, cant, dataItem, precioRevende)
+            toggle()
+        } else {
+            addToCart(data, cant, dataItem, precioRevende)
+        }
     }
 
     return (

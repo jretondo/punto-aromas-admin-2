@@ -70,7 +70,6 @@ const ListaClientesMod = ({
     const [modalSellers, setModalSellers] = useState(false)
     const [clienteSelect, setClienteSelect] = useState({})
     const [domicilio, setDomicilio] = useState("")
-    const [pricesType, setPricesType] = useState(<option value={null}>No hay tipos de precios en el listado de productos</option>)
     const [priceDefault, setPriceDefault] = useState(null)
 
     const NvoProv = (e) => {
@@ -348,50 +347,6 @@ const ListaClientesMod = ({
         })
     }
 
-    const getPricesType = async () => {
-        await axios.get(UrlNodeServer.clientesDir.sub.pricesType, {
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('user-token')
-            }
-        }).then(res => {
-            const respuesta = res.data
-            const status = respuesta.status
-            if (status === 200) {
-                const data = respuesta.body
-                if (data.length > 0) {
-                    let primero = 0
-                    setPricesType(
-                        // eslint-disable-next-line
-                        data.map((item, key) => {
-                            if (item.type_price_name.length > 3 && item.type_price_name !== "MAYORISTA") {
-                                primero = primero + 1
-                                if (primero === 1) {
-                                    return (
-                                        <>
-                                            <option value={null}>Sin precios por defecto</option>
-                                            <option key={key} value={item.type_price_name}>{item.type_price_name}</option>
-                                        </>
-                                    )
-                                } else {
-                                    return (
-                                        <option key={key} value={item.type_price_name}>{item.type_price_name}</option>
-                                    )
-                                }
-
-                            }
-                        })
-                    )
-                } else {
-                    setPricesType(<option value={null}>No hay tipos de precios en el listado de productos</option>)
-                }
-            } else {
-                setPricesType(<option value={null}>No hay tipos de precios en el listado de productos</option>)
-            }
-        }).catch(() => {
-            setPricesType(<option value={null}>No hay tipos de precios en el listado de productos</option>)
-        })
-    }
-
     const ResetForm = () => {
         setNvoDoc("")
         setNvoTipoDoc(0)
@@ -418,7 +373,6 @@ const ListaClientesMod = ({
     useEffect(() => {
         getPv()
         getVendedores()
-        getPricesType()
         // eslint-disable-next-line
     }, [])
 
@@ -608,7 +562,13 @@ const ListaClientesMod = ({
                                                             Precio por defecto
                                                         </Label>
                                                         <Input value={priceDefault} onChange={e => setPriceDefault(e.target.value)} type="select" >
-                                                            {pricesType}
+                                                            <option value={null}>Sin precios por defecto</option>
+                                                            <option value={"minorista"}>Minorista</option>
+                                                            <option value={"mayorista_1"}>Mayorista 1</option>
+                                                            <option value={"mayorista_2"}>Mayorista 2</option>
+                                                            <option value={"mayorista_3"}>Mayorista 3</option>
+                                                            <option value={"revendedor"}>Revendedor</option>
+                                                            <option value={"supermercado"}>Supermercado</option>
                                                         </Input>
                                                     </FormGroup>
                                                 </Col>

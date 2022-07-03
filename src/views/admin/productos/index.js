@@ -25,6 +25,14 @@ import AlertaForm from '../../../components/subComponents/Alertas/Alerta1'
 import { UseSecureRoutes } from "Hooks/UseSecureRoutes"
 import ProdList from "./components/prodlist"
 
+const preciosList = [
+    { type: "Minorista", order: 0 },
+    { type: "Mayorista 1", order: 1 },
+    { type: "Mayorista 2", order: 2 },
+    { type: "Mayorista 3", order: 3 },
+    { type: "Revendedor", order: 4 },
+    { type: "Supermercado", order: 5 }]
+
 const Productos = () => {
     const [alertar, setAlertar] = useState(false)
     const [msgStrongAlert, setMsgStrong] = useState("")
@@ -32,6 +40,7 @@ const Productos = () => {
     const [successAlert, setSuccessAlert] = useState(false)
     const [esperar, setEsperar] = useState(false)
     const [nvaOffer, setNvaOffer] = useState(false)
+
     const [nombreNvo, setNombreNvo] = useState("")
     const [costo, setCosto] = useState("")
     const [descrCortaNvo, setDescrCortaNvo] = useState("")
@@ -39,11 +48,13 @@ const Productos = () => {
     const [subCatNvo, setSubCatNvo] = useState("")
     const [unidad, setUnidad] = useState(0)
     const [idProv, setIdProv] = useState("")
+
     const [listaPrecios, setListaPrecios] = useState([])
+
     const [listaVar, setListaVar] = useState([])
+
     const [listaImgNvas, setListaImgNvas] = useState([])
     const [plantNvasImg, setPlantNvasImg] = useState(<></>)
-    const [codBarras, setCodBarras] = useState("")
 
     const [listaCat, setListaCat] = useState([])
     const [listaSubCat, setListaSubCat] = useState([])
@@ -60,8 +71,6 @@ const Productos = () => {
     const [nvaActCall, setNvaActCall] = useState(false)
     const [actividadStr, setActividadStr] = useState("")
 
-    const [globalProd, setGlobalProd] = useState("")
-
     useActividad(
         nvaActCall,
         actividadStr
@@ -77,7 +86,7 @@ const Productos = () => {
             DetalleProducto()
         }
         // eslint-disable-next-line 
-    }, [detallesBool, idDetalle, globalProd])
+    }, [detallesBool, idDetalle])
 
     const ResetStatesForm = () => {
         setNombreNvo("")
@@ -98,11 +107,9 @@ const Productos = () => {
         setEsperar(true)
         let formData = new FormData();
         let typeSend = "POST"
-        let globalStr = nombreNvo
         if (!copiarDet) {
             if (update) {
-                globalStr = globalProd
-                formData.append("id", idDetalle);
+                formData.append("id_prod", idDetalle);
                 typeSend = "PUT"
                 if (listaImgEliminadas.length > 0) {
                     // eslint-disable-next-line
@@ -133,27 +140,55 @@ const Productos = () => {
             })
         }
         let listaVarAux = []
-        if (update) {
-            listaVarAux.push({
-                cod_barra: codBarras,
-                variedad: "",
-            })
-        } else {
-            listaVarAux = listaVar
-        }
+
+        listaVarAux = listaVar
 
         if (listaPrecios.length > 0 && listaVarAux.length > 0) {
-            formData.append("precio_compra", costo);
+            formData.append("costo", costo);
             formData.append("name", nombreNvo);
-            formData.append("global_name", globalStr);
             formData.append("short_descr", descrCortaNvo);
             formData.append("category", categoriaNvo);
             formData.append("subcategory", subCatNvo);
             formData.append("unidad", unidad);
-            formData.append("id_prov", idProv);
             formData.append("variedades", JSON.stringify(listaVarAux));
-            formData.append("prices", JSON.stringify(listaPrecios));
-
+            let minor = 0
+            let mayor1 = 0
+            let mayor2 = 0
+            let mayor3 = 0
+            let revende = 0
+            let supermer = 0
+            // eslint-disable-next-line
+            listaPrecios.map((item) => {
+                switch (parseInt(item.order)) {
+                    case 0:
+                        minor = item.sell_price
+                        break;
+                    case 1:
+                        mayor1 = item.sell_price
+                        break;
+                    case 2:
+                        mayor2 = item.sell_price
+                        break;
+                    case 3:
+                        mayor3 = item.sell_price
+                        break;
+                    case 4:
+                        revende = item.sell_price
+                        break;
+                    case 5:
+                        supermer = item.sell_price
+                        break;
+                    default:
+                        break;
+                }
+            })
+            formData.append("minorista", minor);
+            formData.append("mayorista_1", mayor1);
+            formData.append("mayorista_2", mayor2);
+            formData.append("mayorista_3", mayor3);
+            formData.append("supermercado", supermer);
+            formData.append("revendedor", revende);
+            formData.append("iva", 0);
             async function postData(url = '', data = {}) {
                 // Default options are marked with *
                 const response = await fetch(url, {
@@ -169,7 +204,6 @@ const Productos = () => {
             postData(UrlNodeServer.productsDir.products, formData)
                 .then(async data => {
                     let respuesta = await data.json()
-                    console.log('respuesta :>> ', respuesta);
                     const status = parseInt(respuesta.status)
                     setEsperar(false)
                     if (status === 200) {
@@ -211,7 +245,7 @@ const Productos = () => {
     const DetalleProducto = async () => {
         ResetStatesForm();
         setEsperar(true)
-        await axios.get(`${UrlNodeServer.productsDir.sub.details}/${idDetalle}?globalName=${globalProd}`, {
+        await axios.get(`${UrlNodeServer.productsDir.sub.details}/${idDetalle}`, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('user-token')
             }
@@ -223,16 +257,86 @@ const Productos = () => {
                 if (status === 200) {
                     const gralData = respuesta.body.productGral[0]
                     const imgData = respuesta.body.productImg
-                    const pricesData = respuesta.body.productPrices
-                    setListaPrecios(pricesData)
+                    const prodVar = respuesta.body.productsVar
+                    const varL = []
+                    // eslint-disable-next-line 
+                    prodVar.map(item => {
+                        varL.push({
+                            cod_barra: item.cod_barra,
+                            variedad: item.name_var
+                        })
+                    })
+                    setListaVar(() => varL)
+                    //setListaPrecios(pricesData)
                     setNombreNvo(gralData.name)
                     setCategoriaNvo(gralData.category)
                     setSubCatNvo(gralData.subcategory)
                     setDescrCortaNvo(gralData.short_descr)
-                    setCosto(gralData.precio_compra)
+                    setCosto(gralData.costo)
                     setUnidad(gralData.unidad)
-                    setCodBarras(gralData.cod_barra)
-                    setCosto(pricesData[0].buy_price)
+                    let preciosL = []
+                    if (gralData.minorista > 0) {
+                        preciosL.push({
+                            type_price_name: "Minorista",
+                            sell_price: gralData.minorista,
+                            order: 0,
+                            porcVta: Math.round(((gralData.minorista - gralData.costo) / gralData.costo) * 100),
+                            round: 0,
+                            roundBool: false
+                        })
+                    }
+                    if (gralData.mayorista_1 > 0) {
+                        preciosL.push({
+                            type_price_name: "Mayorista 1",
+                            sell_price: gralData.mayorista_1,
+                            order: 1,
+                            porcVta: Math.round(((gralData.mayorista_1 - gralData.costo) / gralData.costo) * 100),
+                            round: 0,
+                            roundBool: false
+                        })
+                    }
+                    if (gralData.mayorista_2 > 0) {
+                        preciosL.push({
+                            type_price_name: "Mayorista 2",
+                            sell_price: gralData.mayorista_2,
+                            order: 2,
+                            porcVta: Math.round(((gralData.mayorista_2 - gralData.costo) / gralData.costo) * 100),
+                            round: 0,
+                            roundBool: false
+                        })
+                    }
+                    if (gralData.mayorista_3 > 0) {
+                        preciosL.push({
+                            type_price_name: "Mayorista 3",
+                            sell_price: gralData.mayorista_3,
+                            order: 3,
+                            porcVta: Math.round(((gralData.mayorista_3 - gralData.costo) / gralData.costo) * 100),
+                            round: 0,
+                            roundBool: false
+                        })
+                    }
+                    if (gralData.revendedor > 0) {
+                        preciosL.push({
+                            type_price_name: "Revendedor",
+                            sell_price: gralData.revendedor,
+                            order: 4,
+                            porcVta: Math.round(((gralData.revendedor - gralData.costo) / gralData.costo) * 100),
+                            round: 0,
+                            roundBool: false
+                        })
+                    }
+                    if (gralData.supermercado > 0) {
+                        preciosL.push({
+                            type_price_name: "Supermercado",
+                            sell_price: gralData.supermercado,
+                            order: 4,
+                            porcVta: Math.round(((gralData.supermercado - gralData.costo) / gralData.costo) * 100),
+                            round: 0,
+                            roundBool: false
+                        })
+                    }
+                    console.log('preciosL :>> ', preciosL);
+                    setListaPrecios(() => preciosL)
 
                     if (imgData.length > 0) {
                         let imagenes = []
@@ -262,8 +366,6 @@ const Productos = () => {
                 setAlertar(!alertar)
             })
     }
-
-
 
     if (error) {
         return (
@@ -314,7 +416,6 @@ const Productos = () => {
                                     setIdDetalle={setIdDetalle}
                                     setCopiarDet={setCopiarDet}
                                     setEsperar={setEsperar}
-                                    setGlobalProd={setGlobalProd}
                                 />
 
                                 <Row style={
@@ -372,8 +473,7 @@ const Productos = () => {
                                                             listaVar={listaVar}
                                                             setListaVar={setListaVar}
                                                             detallesBool={detallesBool}
-                                                            codBarras={codBarras}
-                                                            setCodBarras={setCodBarras}
+                                                            preciosList={preciosList}
                                                         />
                                                         <Row>
                                                             <hr className="my-4" />

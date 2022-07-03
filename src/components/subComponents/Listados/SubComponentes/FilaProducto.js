@@ -14,7 +14,6 @@ import formatMoney from 'Function/NumberFormat'
 import ModalNewStock from './ModalNewStock'
 import ModalMoverStock from './ModalMoverStock'
 import Button from 'reactstrap/lib/Button'
-import ModalChangeCodBarras from './ModalChangeCod'
 import ModalVerPrecios from './ModalVerPrecios'
 import ModalVarNueva from './ModalVarNueva'
 import ModalNewImg from './ModalNewImg'
@@ -35,21 +34,17 @@ const FilaProducto = ({
     setEsperar,
     setDetallesBool,
     setIdDetalle,
-    setCopiarDet,
     primero,
     pagina,
     setPagina,
-    setNvaOffer,
-    setGlobalProd
 }) => {
     const [modal, setModal] = useState(false)
     const [modal2, setModal2] = useState(false)
-    const [modal3, setModal3] = useState(false)
     const [modal4, setModal4] = useState(false)
     const [modal6, setModal6] = useState(false)
 
     const [compraBool, setCompraBool] = useState(false)
-    const [newCompra, setNewCompra] = useState(item.precio_compra)
+    const [newCompra, setNewCompra] = useState(item.costo)
 
     const [modal5, setModal5] = useState(false)
 
@@ -107,10 +102,9 @@ const FilaProducto = ({
             });
     }
 
-    const VerDetalles = (e, id, globalName) => {
+    const VerDetalles = (e, id) => {
         e.preventDefault()
         setIdDetalle(id)
-        setGlobalProd(globalName)
         setDetallesBool(true)
     }
 
@@ -124,11 +118,6 @@ const FilaProducto = ({
         setModal2(true)
     }
 
-    const asignarCodModal = (e) => {
-        e.preventDefault()
-        setModal3(true)
-    }
-
     const actChangePrice = () => {
         setCompraBool(true)
         setTimeout(() => {
@@ -139,16 +128,16 @@ const FilaProducto = ({
 
     const changeNewCompra = (e) => {
         if (e.keyCode === 13) {
-            updatePriceCompra()
+            updatePriceCompra(item.costo)
         } else if (e.keyCode === 27) {
             setCompraBool(false)
         }
     }
 
-    const updatePriceCompra = async () => {
+    const updatePriceCompra = async (oldCost) => {
         const data = {
             cost: newCompra,
-            globalName: item.global_name
+            oldCost: oldCost
         }
         await axios.put(`${UrlNodeServer.productsDir.sub.cost}/${item.id_prod}`, data, {
             headers: {
@@ -195,6 +184,10 @@ const FilaProducto = ({
 
     }, [compraBool])
 
+    useEffect(() => {
+        setNewCompra(item.costo)
+    }, [item])
+
     return (
         <>
             <tr key={id}>
@@ -216,22 +209,7 @@ const FilaProducto = ({
                                 />
                             </a>
                             <span className="mb-0 text-sm" style={{ marginLeft: "10px" }}>
-                                <span style={{ fontSize: "17px" }}  > {item.name}</span><br />
-                                <span style={{ fontSize: "11px" }} >
-                                    <Button
-                                        color="primary"
-                                        onClick={asignarCodModal}
-                                        style={{
-                                            fontSize: "12px",
-                                            padding: "5px",
-                                            paddingTop: 0,
-                                            paddingBottom: 0,
-                                            borderRadius: "50%",
-                                            marginRight: "5px"
-                                        }}
-                                    >+</Button>
-                                    (Cód.: {item.cod_barra})
-                                </span>
+                                <span style={{ fontSize: "17px" }}  > {item.name}</span>
                             </span>
                         </Media>
                     </Media>
@@ -246,7 +224,7 @@ const FilaProducto = ({
                     {
                         compraBool ?
                             <input id="inpNewCostTxt" value={newCompra} onChange={e => setNewCompra(e.target.value)} onKeyDown={e => changeNewCompra(e)} /> :
-                            "$" + formatMoney(item.precio_compra)
+                            "$" + formatMoney(item.costo)
                     }
                 </td>
                 <td style={{ textAlign: "center" }}>
@@ -286,7 +264,7 @@ const FilaProducto = ({
                             </DropdownItem>
                             <DropdownItem
                                 href="#pablo"
-                                onClick={e => VerDetalles(e, item.id_prod, item.global_name)}
+                                onClick={e => VerDetalles(e, item.id_prod)}
                             >
                                 <i className="fas fa-search"></i>
                                 Ver detalles
@@ -336,13 +314,6 @@ const FilaProducto = ({
                 setMsgStrong={setMsgStrong}
                 setMsgGralAlert={setMsgGralAlert}
                 setSuccessAlert={setSuccessAlert}
-                setCall={setCall}
-                call={call}
-            />
-            <ModalChangeCodBarras
-                setModal={setModal3}
-                modal={modal3}
-                item={item}
                 setCall={setCall}
                 call={call}
             />

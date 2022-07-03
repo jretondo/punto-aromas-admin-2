@@ -9,7 +9,7 @@ const FilaProdSearch = ({
 }) => {
     const SelectProd = (prod) => {
         prodSearchToggle()
-        setProdText(prod.name)
+        setProdText("id:" + prod.id_prod)
         findProd("id:" + prod.id_prod)
     }
     return (

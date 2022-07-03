@@ -4,10 +4,14 @@ const FilaPrecio = ({
     id,
     item,
     setListaPrecios,
-    muestra
+    muestra,
+    preciosDisp,
+    setPreciosDisp
 }) => {
 
     const quitar = () => {
+        setPreciosDisp(() => [...preciosDisp, { type: item.type_price_name, order: item.order }])
+        setPreciosDisp((prices) => prices.sort((a, b) => a.order - b.order))
         setListaPrecios(listaPrecios => {
             listaPrecios.splice(id, 1)
             return [...listaPrecios]
@@ -20,13 +24,7 @@ const FilaPrecio = ({
                 {item.type_price_name}
             </td>
             <td style={{ textAlign: "center" }}>
-                {item.percentage_sell} %
-            </td>
-            <td style={{ textAlign: "center" }}>
                 $ {formatMoney(item.sell_price)}
-            </td>
-            <td style={{ textAlign: "center" }}>
-                {item.min}
             </td>
             {
                 muestra ? null :

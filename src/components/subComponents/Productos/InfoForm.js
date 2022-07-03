@@ -22,13 +22,14 @@ const InfoForm = ({
     setListaVar,
     detallesBool,
     codBarras,
-    setCodBarras
+    setCodBarras,
+    preciosList
 }) => {
 
     return (
         <>
             <Row>
-                <Col lg={detallesBool ? 5 : 6}>
+                <Col lg={6}>
                     <FormGroup>
                         <label
                             className="form-control-label"
@@ -47,18 +48,7 @@ const InfoForm = ({
                         />
                     </FormGroup>
                 </Col>
-                {
-                    detallesBool ?
-                        <Col md="3">
-                            <FormGroup>
-                                <Label>
-                                    Cód. de Barras
-                                </Label>
-                                <Input value={codBarras} onChange={e => setCodBarras(e.target.value)} type="text" />
-                            </FormGroup>
-                        </Col> : null
-                }
-                <Col md={detallesBool ? 2 : 3}>
+                <Col md={3}>
                     <FormGroup>
                         <Label>
                             Costo
@@ -66,7 +56,7 @@ const InfoForm = ({
                         <Input value={costo} onChange={e => setCosto(e.target.value)} type="number" />
                     </FormGroup>
                 </Col>
-                <Col lg={detallesBool ? 2 : 3}>
+                <Col lg={3}>
                     <FormGroup>
                         <label
                             className="form-control-label"
@@ -86,14 +76,13 @@ const InfoForm = ({
                 costo={costo}
                 listaPrecios={listaPrecios}
                 setListaPrecios={setListaPrecios}
+                preciosList={preciosList}
             />
-            {
-                detallesBool ? null :
-                    <VariedadesProd
-                        listaVar={listaVar}
-                        setListaVar={setListaVar}
-                    />
-            }
+
+            <VariedadesProd
+                listaVar={listaVar}
+                setListaVar={setListaVar}
+            />
         </>
     )
 }

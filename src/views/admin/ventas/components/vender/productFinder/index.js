@@ -131,6 +131,7 @@ const ProductFinder = ({ clienteData }) => {
             />
             <ModalPricesCant
                 text={prodText}
+                setProdText={setProdText}
                 modal={modalPrices}
                 toggle={() => setModalPrices(!modalPrices)}
                 cantProd={cantProd}

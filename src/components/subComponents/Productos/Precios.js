@@ -4,20 +4,22 @@ import swal from 'sweetalert';
 import ListadoTable from '../Listados/ListadoTable';
 import FilaPrecio from '../Listados/SubComponentes/FilaPrecio';
 
-const titulos = ["Tipo de precio", "(%) Ganancia", "($) Venta", "Cant. Min.", ""]
+const titulos = ["Tipo de precio", "($) Venta", ""]
 
 const PreciosProducto = ({
     costo,
     listaPrecios,
-    setListaPrecios
+    setListaPrecios,
+    preciosList
 }) => {
+    const [preciosDisp, setPreciosDisp] = useState(preciosList)
+    const [optionPlant, setOptionPlant] = useState(<></>)
     const [modal1, setModal1] = useState(false)
     const [modal2, setModal2] = useState(false)
     const [venta, setVenta] = useState(0)
     const [porcVta, setPorcVta] = useState(0)
     const [roundBool, setRoundBool] = useState(false)
     const [round, setRound] = useState(0)
-    const [cantMin, setCantMin] = useState(0)
     const [tipoPrecio, setTipoPrecio] = useState("")
     const [listado, setListado] = useState(<tr><td>No hay precios agregados</td></tr>)
     const toggleModal1 = () => {
@@ -48,20 +50,26 @@ const PreciosProducto = ({
     }
 
     const newItem = () => {
-        setListaPrecios(listaPrecios => [...listaPrecios, {
-            type_price_name: tipoPrecio,
-            percentage_sell: porcVta,
-            sell_price: venta,
-            min: cantMin,
-            round: round,
-            roundBool: roundBool,
-            buy_price: costo
-        }])
-        document.getElementById("precioVtaTxt").focus()
-        document.getElementById("precioVtaTxt").select()
+
+        if (tipoPrecio) {
+            const newDisp = preciosDisp.filter(item => item.type !== tipoPrecio.type)
+            setPreciosDisp(() => newDisp)
+            setListaPrecios(listaPrecios => [...listaPrecios, {
+                type_price_name: tipoPrecio.type,
+                sell_price: venta,
+                order: tipoPrecio.order,
+                porcVta: porcVta,
+                round: round,
+                roundBool: roundBool
+            }])
+        } else {
+            swal("Precios", "No hay más precios disponibles para agregar", "error")
+        }
+
     }
 
     const recalcular = () => {
+        console.log('listaPrecios :>> ', listaPrecios);
         if (listaPrecios.length > 0) {
             let preciosNvos = []
             // eslint-disable-next-line
@@ -70,15 +78,14 @@ const PreciosProducto = ({
                 if (parseInt(item.round) > 0) {
                     valueRound = parseInt(item.round)
                 }
-                const newPrice = (Math.round((costo * (1 + (item.percentage_sell / 100))) * (100 / valueRound))) / (100 / valueRound)
+                const newPrice = (Math.round((costo * (1 + (item.porcVta / 100))) * (100 / valueRound))) / (100 / valueRound)
                 preciosNvos.push({
                     type_price_name: item.type_price_name,
-                    percentage_sell: item.percentage_sell,
                     sell_price: newPrice,
-                    min: item.min,
+                    order: item.order,
+                    porcVta: item.porcVta,
                     round: item.round,
-                    roundBool: item.roundBool,
-                    buy_price: costo
+                    roundBool: item.roundBool
                 })
                 if (key === listaPrecios.length - 1) {
                     setListaPrecios(() => preciosNvos)
@@ -104,6 +111,23 @@ const PreciosProducto = ({
     }, [roundBool])
 
     useEffect(() => {
+        if (preciosDisp.length > 0) {
+            setOptionPlant(
+                preciosDisp.map((item, key) => {
+                    if (key === 0) {
+                        setTipoPrecio(item)
+                    }
+                    return (<option key={key} value={JSON.stringify(item)}>{item.type}</option>)
+                })
+            )
+        } else {
+            setTipoPrecio(false)
+            setOptionPlant(<></>)
+        }
+
+    }, [preciosDisp])
+
+    useEffect(() => {
         if (listaPrecios.length > 0) {
             setListado(
                 listaPrecios.map((item, key) => {
@@ -114,6 +138,8 @@ const PreciosProducto = ({
                             item={item}
                             listaPrecios={listaPrecios}
                             setListaPrecios={setListaPrecios}
+                            preciosDisp={preciosDisp}
+                            setPreciosDisp={setPreciosDisp}
                         />
                     )
                 })
@@ -170,7 +196,7 @@ const PreciosProducto = ({
             <ModalHeader toggle={toggleModal1}>Nuevo Precio</ModalHeader>
             <ModalBody>
                 <Row>
-                    <Col md="8" >
+                    <Col md="6" >
                         <FormGroup>
                             <label
                                 className="form-control-label"
@@ -178,32 +204,12 @@ const PreciosProducto = ({
                             >
                                 Tipo de Precio
                             </label>
-                            <Input style={{ fontSize: "25px" }} type="text" id="precioVtaTxt" value={tipoPrecio} onChange={e => setTipoPrecio(e.target.value)} />
+                            <Input required style={{ fontSize: "20px" }} type="select" id="precioVtaTxt" value={JSON.stringify(tipoPrecio)} onChange={e => setTipoPrecio(JSON.parse(e.target.value))}>
+                                {optionPlant}
+                            </Input>
                         </FormGroup>
                     </Col>
-                    <Col md="4">
-                        <FormGroup>
-                            <label
-                                className="form-control-label"
-                                htmlFor="input-username"
-                            >
-                                Cant. Mínima
-                            </label>
-                            <Input
-                                className="form-control-alternative"
-                                id="input-username"
-                                placeholder="Costo del producto..."
-                                type="number"
-                                style={{ fontSize: "25px" }}
-                                value={cantMin}
-                                onChange={e => setCantMin(e.target.value)}
-                                required
-                            />
-                        </FormGroup>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col lg="4">
+                    <Col lg="6">
                         <FormGroup>
                             <label
                                 className="form-control-label"
@@ -216,6 +222,8 @@ const PreciosProducto = ({
                                 id="input-username"
                                 placeholder="% venta..."
                                 type="number"
+                                min={1}
+                                step={1}
                                 style={{ fontSize: "25px" }}
                                 value={porcVta}
                                 onChange={e => {
@@ -225,7 +233,9 @@ const PreciosProducto = ({
                             />
                         </FormGroup>
                     </Col>
-                    <Col md="4" >
+                </Row>
+                <Row>
+                    <Col md="6" >
                         <FormGroup>
                             <label
                                 className="form-control-label"
@@ -233,10 +243,10 @@ const PreciosProducto = ({
                             >
                                 Precio de venta
                             </label>
-                            <Input style={{ fontSize: "25px" }} type="text" id="precioVtaTxt" value={venta} onChange={e => setVenta(e.target.value)} />
+                            <Input style={{ fontSize: "25px" }} min={0.01} step={0.01} type="text" id="precioVtaTxt" value={venta} onChange={e => setVenta(e.target.value)} />
                         </FormGroup>
                     </Col>
-                    <Col lg="4">
+                    <Col lg="6">
                         <FormGroup>
                             <FormGroup check>
                                 <Label check>

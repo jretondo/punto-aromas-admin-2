@@ -13,7 +13,8 @@ const ModalPricesCant = ({
     toggle,
     cantProd,
     clienteData,
-    setCantProd
+    setCantProd,
+    setProdText
 }) => {
     const [listPrices, setListPrices] = useState(<tr><td>No hay precios asociados</td></tr>)
     const { NewProdSell } = useContext(productsSellContext)
@@ -38,25 +39,73 @@ const ModalPricesCant = ({
                 const status = respuesta.status
                 if (status === 200) {
                     const data = respuesta.body.data[0]
-                    const prices2 = respuesta.body.prices
-                    if (prices2.length === 0) {
+                    let pricesData = []
+                    if (parseFloat(data.minorista) > 0) {
+                        pricesData.push({
+                            type_price_name: "minorista",
+                            sell_price: data.minorista
+                        })
+                    }
+                    if (parseFloat(data.mayorista_1) > 0) {
+                        pricesData.push({
+                            type_price_name: "mayorista_1",
+                            sell_price: data.mayorista_1
+                        })
+                    }
+                    if (parseFloat(data.mayorista_2) > 0) {
+                        pricesData.push({
+                            type_price_name: "mayorista_2",
+                            sell_price: data.mayorista_2
+                        })
+                    }
+                    if (parseFloat(data.mayorista_3) > 0) {
+                        pricesData.push({
+                            type_price_name: "mayorista_3",
+                            sell_price: data.mayorista_3
+                        })
+                    }
+                    if (parseFloat(data.revendedor) > 0) {
+                        pricesData.push({
+                            type_price_name: "revendedor",
+                            sell_price: data.revendedor
+                        })
+                    }
+                    if (parseFloat(data.supermercado) > 0) {
+                        pricesData.push({
+                            type_price_name: "supermercado",
+                            sell_price: data.supermercado
+                        })
+                    }
+
+                    if (pricesData.length === 0) {
                         swal("Error con los precios", "Este producto no tiene precios asociados! Controlelo.", "error")
-                    } else if (prices2.length === 1) {
-                        addProduct(data, cant, prices2[0].id)
+                    } else if (pricesData.length === 1) {
+                        addProduct(data, cant, pricesData, 0)
                     } else {
-                        const revendePriceItem = prices2.find(item => item.type_price_name === "REVENDEDOR")
-                        let precioRevende = 0
-                        if (revendePriceItem.sell_price) {
-                            precioRevende = revendePriceItem.sell_price
+                        if (clienteData.price_default) {
+                            const precioRevende = data.revendedor
+                            if (parseFloat(precioRevende) === 0) {
+                                swal("Producto sin comisión!", "Este producto no posee precio de reventa! Lo que no dejará ninguna comisión!", "info")
+                            }
+                            setDataProd(data)
+                            setPrices(pricesData)
+                            setRevProd(precioRevende)
+                            const price = pricesData.filter(item => item.type_price_name === clienteData.price_default)
+                            if (price.length > 0) {
+                                addProduct(data, cant, price[0], data.revendedor)
+                            }
                         } else {
-                            swal("Producto sin comisión!", "Este producto no posee precio de reventa! Lo que no dejará ninguna comisión!", "info")
-                        }
-                        setDataProd(data)
-                        setPrices(prices2)
-                        setRevProd(precioRevende)
-                        const price = prices2.filter(item => item.type_price_name === clienteData.price_default)
-                        if (price.length > 0) {
-                            addProduct(data, cant, price[0], precioRevende)
+                            const precioRevende = data.revendedor
+                            if (parseFloat(precioRevende) === 0) {
+                                swal("Producto sin comisión!", "Este producto no posee precio de reventa! Lo que no dejará ninguna comisión!", "info")
+                            }
+                            setDataProd(data)
+                            setPrices(pricesData)
+                            setRevProd(precioRevende)
+                            const price = pricesData.filter(item => item.type_price_name === "mayorista_1")
+                            if (price.length > 0) {
+                                addProduct(data, cant, price[0], data.revendedor)
+                            }
                         }
                     }
                 } else {
@@ -64,7 +113,7 @@ const ModalPricesCant = ({
                 }
             }).catch((err) => {
                 swal("Error!", "Hubo un error: " + err.message, "error");
-            })
+            }).finally(() => setProdText(""))
     }
 
     useEffect(() => {
