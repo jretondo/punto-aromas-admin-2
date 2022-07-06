@@ -56,6 +56,8 @@ const Productos = () => {
     const [listaImgNvas, setListaImgNvas] = useState([])
     const [plantNvasImg, setPlantNvasImg] = useState(<></>)
 
+    const [pagina, setPagina] = useState(1)
+
     const [listaCat, setListaCat] = useState([])
     const [listaSubCat, setListaSubCat] = useState([])
     const [plantCat, setPlantCat] = useState(<></>)
@@ -335,7 +337,7 @@ const Productos = () => {
                             roundBool: false
                         })
                     }
-                    console.log('preciosL :>> ', preciosL);
+
                     setListaPrecios(() => preciosL)
 
                     if (imgData.length > 0) {
@@ -416,6 +418,8 @@ const Productos = () => {
                                     setIdDetalle={setIdDetalle}
                                     setCopiarDet={setCopiarDet}
                                     setEsperar={setEsperar}
+                                    pagina={pagina}
+                                    setPagina={setPagina}
                                 />
 
                                 <Row style={

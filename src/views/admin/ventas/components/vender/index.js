@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import UrlNodeServer from '../../../../../api/NodeServer'
 import {
     Card,
@@ -46,6 +46,9 @@ const Ventas = ({
     const [descuentoPerc, setDescuentoPer] = useState(0)
     const [variosPagos, setVariosPagos] = useState([])
     const [total, setTotal] = useState(0)
+    const [costoEnvio, setCostoEnvio] = useState(0)
+
+    const [totalFinal, setTotalFinal] = useState(0)
 
     const [clienteData, setClienteData] = useState({ id: 0, price_default: "" })
 
@@ -86,7 +89,8 @@ const Ventas = ({
                 cliente_name: razSoc,
                 lista_prod: productsSellList,
                 descuentoPerc: descuentoPerc,
-                variosPagos: variosPagos
+                variosPagos: variosPagos,
+                costoEnvio: costoEnvio
             },
             fiscal: factFiscBool,
             totalRevende: totalRevende
@@ -168,11 +172,16 @@ const Ventas = ({
         }).finally(() => { setProcessing(false) })
     }
 
+    useEffect(() => {
+        setTotalFinal(parseFloat(totalPrecio) - ((parseFloat(totalPrecio)) * (descuentoPerc / 100)) + parseFloat(costoEnvio))
+    }, [costoEnvio, totalPrecio, descuentoPerc])
+
     return (
         <Card >
             <ModalChange
                 modal={modal1}
                 toggle={() => setModal1(!modal1)}
+                totalFinal={totalFinal}
             />
             <CardBody>
                 {
@@ -243,6 +252,18 @@ const Ventas = ({
                                             </FormGroup>
                                         </Col>
                                     </Row>
+                                    <Row style={{ marginTop: 0 }}>
+                                        <Col md="4" style={{ marginLeft: "auto", textAlign: "right" }}>
+                                            <Label style={{ fontSize: "25px", fontWeight: "bold" }} >
+                                                Envío:
+                                            </Label>
+                                        </Col>
+                                        <Col md="8" >
+                                            <FormGroup>
+                                                <Input style={{ fontSize: "20px", fontWeight: "bold", textAlign: "right" }} type="text" onChange={e => setCostoEnvio(e.target.value)} value={costoEnvio} />
+                                            </FormGroup>
+                                        </Col>
+                                    </Row>
 
                                     <Row style={{ marginTop: 0 }}>
                                         <Col md="4" style={{ marginLeft: "auto", textAlign: "right" }}>
@@ -260,7 +281,7 @@ const Ventas = ({
                                                         </InputGroup>
                                                     </Col>
                                                     <Col md="8">
-                                                        <Input style={{ fontSize: "20px", fontWeight: "bold", textAlign: "right" }} type="text" value={"$ " + formatMoney(((descuentoPerc > 0 && descuentoPerc <= 100) ? (totalPrecio * (descuentoPerc / 100)) : 0))} disabled />
+                                                        <Input style={{ fontSize: "20px", fontWeight: "bold", textAlign: "right" }} type="text" value={"$ " + formatMoney(((parseFloat(-totalPrecio)) * (descuentoPerc / 100)))} disabled />
                                                     </Col>
                                                 </Row>
                                             </FormGroup>
@@ -275,7 +296,7 @@ const Ventas = ({
                                         </Col>
                                         <Col md="8" >
                                             <FormGroup>
-                                                <Input style={{ fontSize: "20px", fontWeight: "bold", textAlign: "right" }} type="text" value={"$ " + formatMoney((parseFloat(descuentoPerc) > 0 && parseFloat(descuentoPerc) <= 100) ? (totalPrecio - (totalPrecio * (descuentoPerc / 100))) : totalPrecio)} disabled />
+                                                <Input style={{ fontSize: "20px", fontWeight: "bold", textAlign: "right" }} type="text" value={"$ " + formatMoney(totalFinal)} disabled />
                                             </FormGroup>
                                         </Col>
                                     </Row>

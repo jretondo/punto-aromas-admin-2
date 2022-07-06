@@ -28,14 +28,16 @@ const ProdList = ({
     setDetallesBool,
     setIdDetalle,
     setCopiarDet,
-    setGlobalProd
+    setGlobalProd,
+    pagina,
+    setPagina
 }) => {
 
     const [busquedaBool, setBusquedaBool] = useState(false)
     const [palabraBuscada, setPalabraBuscada] = useState("")
     const [plantPaginas, setPlantPaginas] = useState([])
     const [ultimaPag, setUltimaPag] = useState(0)
-    const [pagina, setPagina] = useState(1)
+
     const [listado, setListado] = useState([])
     const [dataState, setDataState] = useState([])
     const [esperar, setEsperar] = useState(false)
@@ -68,10 +70,6 @@ const ProdList = ({
         }
         // eslint-disable-next-line 
     }, [nvaOffer])
-
-    useEffect(() => {
-        setPagina(1)
-    }, [busquedaBool])
 
     const ListarProductos = async () => {
         setEsperar(true)

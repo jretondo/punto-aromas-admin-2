@@ -1,15 +1,14 @@
 import formatMoney from 'Function/NumberFormat';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Col, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
-import productsSellContext from '../../../../../context/productsSell';
 
 const ModalChange = ({
     modal,
-    toggle
+    toggle,
+    totalFinal
 }) => {
-    const { totalPrecio } = useContext(productsSellContext)
     const [abona, setAbona] = useState(0)
-    const [total, setTotal] = useState(totalPrecio)
+    const [total, setTotal] = useState(totalFinal)
 
     useEffect(() => {
 
@@ -20,7 +19,7 @@ const ModalChange = ({
 
             }
         }, 300);
-        setTotal(totalPrecio)
+        setTotal(totalFinal)
         // eslint-disable-next-line
     }, [modal])
 
