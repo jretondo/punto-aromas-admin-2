@@ -8,7 +8,7 @@ import FilaCtaCte from 'components/subComponents/Listados/SubComponentes/FilaCta
 import formatMoney from 'Function/NumberFormat';
 import ModalCobroCtaCte from './modalCobro';
 
-const titulos = ["Fecha", "Detalle", "Factura", "Importe"]
+const titulos = ["Fecha", "Factura", "Importe Total", "Pagado", "Pendiente", ""]
 const CtaCteListClientMod = ({
     idCliente,
     nombreCliente,
@@ -33,15 +33,10 @@ const CtaCteListClientMod = ({
             data = {
                 idCliente: idCliente
             }
-        } else if (parseInt(tipoCons) === 1) {
-            data = {
-                idCliente: idCliente,
-                debit: true
-            }
         } else {
             data = {
                 idCliente: idCliente,
-                credit: true
+                pendiente: true
             }
         }
         setEsperar(true)
@@ -61,6 +56,7 @@ const CtaCteListClientMod = ({
                     setUltimaPag(body.pagesObj.totalPag)
                     if (parseInt(body.pagesObj.totalPag) > 0) {
                         setTotal((body.suma[0].SUMA))
+                        console.log('body.data :>> ', body.data);
                         setListado(
                             body.data.map((item, key) => {
                                 return (
@@ -68,6 +64,7 @@ const CtaCteListClientMod = ({
                                         key={key}
                                         id={key}
                                         item={item}
+                                        actualizar={() => setActualizar(!actualizar)}
                                     />
                                 )
                             })
@@ -138,8 +135,7 @@ const CtaCteListClientMod = ({
                                                     setTipoCons(e.target.value)
                                                 }}>
                                                     <option value={0} >Todos</option>
-                                                    <option value={1}>Débitos</option>
-                                                    <option value={2}>Créditos</option>
+                                                    <option value={1}>Pendientes</option>
                                                 </Input>
                                             </FormGroup>
                                         </Col>
@@ -151,25 +147,14 @@ const CtaCteListClientMod = ({
                                     titulos={titulos}
                                 />
                                 <CardFooter className="py-4">
-                                    <Row>
+                                    <Row style={{ marginBottom: "25px" }}>
                                         <Col md="9">
 
                                         </Col>
                                         <Col md="3">
-                                            <Input style={parseInt(total) > 0 ? { fontWeight: "bold", textAlign: "right", fontSize: "18px", color: "green" } : { fontWeight: "bold", textAlign: "right", fontSize: "18px", color: "red" }} disabled value={"$ " + formatMoney(total)} />
+                                            <Input style={parseInt(total) > 0 ? { fontWeight: "bold", textAlign: "right", fontSize: "18px", color: "red" } : { fontWeight: "bold", textAlign: "right", fontSize: "18px", color: "red" }} disabled value={"$ " + formatMoney(total)} />
                                         </Col>
                                     </Row>
-                                    <nav aria-label="..." style={{ marginBottom: "20px" }}>
-                                        <button
-                                            className="btn btn-primary"
-                                            onClick={e => {
-                                                e.preventDefault()
-                                                setModalCobro(true)
-                                            }} >
-                                            Registrar Cobro
-                                        </button>
-                                    </nav>
-
                                     <Paginacion
                                         setPagina={setPagina}
                                         setCall={setCall}

@@ -140,7 +140,7 @@ const ModalPricesCant = ({
             FindProd()
         }
         // eslint-disable-next-line
-    }, [modal, text])
+    }, [modal, text, clienteData])
 
     useEffect(() => {
         setCant(cantProd)

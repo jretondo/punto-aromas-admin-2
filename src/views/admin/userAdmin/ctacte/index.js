@@ -4,11 +4,11 @@ import React, { useEffect, useState } from 'react';
 import { Button, Card, CardFooter, CardHeader, Col, FormGroup, Input, Label, Row, Spinner } from 'reactstrap';
 import UrlNodeServer from '../../../../api/NodeServer'
 import axios from 'axios'
-import FilaCtaCte from 'components/subComponents/Listados/SubComponentes/FilaCtaCteSeller';
+import FilaCtaCte from 'components/subComponents/Listados/SubComponentes/FilaCtaCte2';
 import formatMoney from 'Function/NumberFormat';
-import ModalCobroCtaCte from './modalCobro';
+import ModalCobroCtaCte from './modalPago';
 
-const titulos = ["Fecha", "Detalle", "Factura", "Importe"]
+const titulos = ["Fecha", "Factura", "Comisión Total", "Pagado", "Pendiente", "Sin Imputar"]
 const CtaCteListClientMod = ({
     idCliente,
     nombreCliente,
@@ -28,22 +28,13 @@ const CtaCteListClientMod = ({
     const [actualizar, setActualizar] = useState(false)
 
     const ListarCtaCte = async () => {
-        let data
-        if (parseInt(tipoCons) === 0) {
-            data = {
-                idCliente: idCliente
-            }
-        } else if (parseInt(tipoCons) === 1) {
-            data = {
-                idCliente: idCliente,
-                debit: true
-            }
-        } else {
-            data = {
-                idCliente: idCliente,
-                credit: true
-            }
+        let data = {
+            idCliente: idCliente
         }
+        if (parseInt(tipoCons) === 1) {
+            data.pendiente = true
+        }
+
         setEsperar(true)
         await axios.get(`${UrlNodeServer.usuariosDir.sub.ctaCte}/${pagina}`, {
             params: data,
@@ -61,6 +52,7 @@ const CtaCteListClientMod = ({
                     setUltimaPag(body.pagesObj.totalPag)
                     if (parseInt(body.pagesObj.totalPag) > 0) {
                         setTotal((body.suma[0].SUMA))
+                        console.log('body.data :>> ', body.data);
                         setListado(
                             body.data.map((item, key) => {
                                 return (
@@ -68,6 +60,7 @@ const CtaCteListClientMod = ({
                                         key={key}
                                         id={key}
                                         item={item}
+                                        actualizar={() => setActualizar(!actualizar)}
                                     />
                                 )
                             })
@@ -77,12 +70,14 @@ const CtaCteListClientMod = ({
                         setListado(
                             <tr><td></td><td>Aún no posee movimientos en su Cta. Cte.</td></tr>
                         )
+                        setTotal(0)
                     }
                 } else {
                     setUltimaPag(1)
                     setListado(
                         <tr><td></td><td>Aún no posee movimientos en su Cta. Cte.</td></tr>
                     )
+                    setTotal(0)
                 }
             })
             .catch((error) => {
@@ -92,6 +87,7 @@ const CtaCteListClientMod = ({
                 setListado(
                     <tr><td></td><td>Aún no posee movimientos en su Cta. Cte.</td></tr>
                 )
+                setTotal(0)
             })
     }
 
@@ -110,8 +106,9 @@ const CtaCteListClientMod = ({
                     <ModalCobroCtaCte
                         modal={modalCobro}
                         toggle={() => setModalCobro(!modalCobro)}
-                        clienteID={idCliente}
+                        vendedorId={idCliente}
                         actualizar={() => setActualizar(!actualizar)}
+                        suma={total}
                     />
                     <Row>
                         <Col md="12" style={{ textAlign: "right" }} >
@@ -128,7 +125,7 @@ const CtaCteListClientMod = ({
                             <Card className="shadow">
                                 <CardHeader className="border-0">
                                     <Row>
-                                        <Col md="9  " >
+                                        <Col md="9" >
                                             <h2 className="mb-0">Cuenta Corriente: {nombreCliente}</h2>
                                         </Col>
                                         <Col md="3" style={{ textAlign: "left" }}>
@@ -138,8 +135,7 @@ const CtaCteListClientMod = ({
                                                     setTipoCons(e.target.value)
                                                 }}>
                                                     <option value={0} >Todos</option>
-                                                    <option value={1}>Débitos</option>
-                                                    <option value={2}>Créditos</option>
+                                                    <option value={1}>Pendientes</option>
                                                 </Input>
                                             </FormGroup>
                                         </Col>
@@ -151,25 +147,19 @@ const CtaCteListClientMod = ({
                                     titulos={titulos}
                                 />
                                 <CardFooter className="py-4">
-                                    <Row>
+                                    <Row style={{ marginBottom: "25px" }}>
                                         <Col md="9">
-
-                                        </Col>
-                                        <Col md="3">
-                                            <Input style={parseInt(total) > 0 ? { fontWeight: "bold", textAlign: "right", fontSize: "18px", color: "green" } : { fontWeight: "bold", textAlign: "right", fontSize: "18px", color: "red" }} disabled value={"$ " + formatMoney(total)} />
-                                        </Col>
-                                    </Row>
-                                    <nav aria-label="..." style={{ marginBottom: "20px" }}>
-                                        <button
-                                            className="btn btn-primary"
-                                            onClick={e => {
+                                            <Button color="primary" onClick={e => {
                                                 e.preventDefault()
                                                 setModalCobro(true)
-                                            }} >
-                                            Registrar Cobro
-                                        </button>
-                                    </nav>
-
+                                            }}>
+                                                Pagar Comisiones
+                                            </Button>
+                                        </Col>
+                                        <Col md="3">
+                                            <Input style={parseInt(total) > 0 ? { fontWeight: "bold", textAlign: "right", fontSize: "18px", color: "green" } : { fontWeight: "bold", textAlign: "right", fontSize: "18px", color: "green" }} disabled value={"$ " + formatMoney(total)} />
+                                        </Col>
+                                    </Row>
                                     <Paginacion
                                         setPagina={setPagina}
                                         setCall={setCall}

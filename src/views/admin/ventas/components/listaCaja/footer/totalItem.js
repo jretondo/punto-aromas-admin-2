@@ -13,8 +13,11 @@ const TotalItemsVtas = ({
 
     const format = useCallback(() => {
         switch (parseInt(totalId)) {
-            case -1:
+            case -2:
                 setTituloStr("Total Costo")
+                break;
+            case -1:
+                setTituloStr("Total Costo sin Cta Cte")
                 break;
             case 0:
                 setTituloStr("Total Efectivo")

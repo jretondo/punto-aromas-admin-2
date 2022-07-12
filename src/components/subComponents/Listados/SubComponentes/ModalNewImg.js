@@ -31,7 +31,7 @@ const ModalNewImage = ({
                     // eslint-disable-next-line
                     imagesList.map((item, key) => {
                         if (item.url_img !== "") {
-                            imagenes.push([item.url_img, item.id])
+                            imagenes.push([item.url_img, item.id_img])
                         }
                         if (key === imagesList.length - 1) {
                             setListaImgNvas(imagenes)
@@ -52,9 +52,7 @@ const ModalNewImage = ({
         setLoading(true)
         let formData = new FormData();
         const typeSend = "PUT"
-        const globalStr = item.global_name
-
-        formData.append("id", item.id_prod);
+        formData.append("id_prod", item.id_prod);
         if (listaImgEliminadas.length > 0) {
             // eslint-disable-next-line
             listaImgEliminadas.map(imagen => {
@@ -81,7 +79,6 @@ const ModalNewImage = ({
                 })
             })
         }
-        formData.append("global_name", globalStr);
 
         async function postData(url = '', data = {}) {
             // Default options are marked with *
@@ -98,7 +95,6 @@ const ModalNewImage = ({
         postData(UrlNodeServer.productsDir.sub.images, formData)
             .then(async data => {
                 let respuesta = await data.json()
-                console.log('respuesta :>> ', respuesta);
                 const status = parseInt(respuesta.status)
                 if (status === 200) {
                     swal("Imagenes cargadas!", "Las imagenes ya se encuentran en el servidor!", "success");

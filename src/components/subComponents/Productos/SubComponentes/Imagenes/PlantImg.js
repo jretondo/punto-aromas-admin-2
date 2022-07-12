@@ -28,6 +28,7 @@ const PlantImgForm = ({
 
     const NvaImagenEliminada = (e, id, key, urlImg) => {
         e.preventDefault()
+        console.log('id :>> ', id);
         if (id > 0) {
             let imgEliminadasArray = listaImgEliminadas
             imgEliminadasArray.push(urlImg)
@@ -53,7 +54,7 @@ const PlantImgForm = ({
                         <Row>
                             <Col>
                                 <img
-                                    src={parseInt(idImg) > 0 ? `${UrlNodeServer.publicFolder.prodImages}${urlimg}` : urlimg}
+                                    src={parseInt(idImg) !== 0 ? `${UrlNodeServer.publicFolder.prodImages}${urlimg}` : urlimg}
                                     style={{ width: "100%" }}
                                     alt={"img" + id}
                                 />
@@ -72,7 +73,7 @@ const PlantImgForm = ({
                             <Col>
                                 <img
                                     id={"img_" + id}
-                                    src={parseInt(idImg) > 0 ? `${UrlNodeServer.publicFolder.prodImages}${urlimg}` : urlimg}
+                                    src={parseInt(idImg) !== 0 ? `${UrlNodeServer.publicFolder.prodImages}${urlimg}` : urlimg}
                                     style={{ width: "100%" }}
                                     alt={"img" + id}
                                 />

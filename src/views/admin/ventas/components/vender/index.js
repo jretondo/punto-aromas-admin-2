@@ -151,11 +151,8 @@ const Ventas = ({
             setDescuentoPer(0)
             setFormaPago(0)
             setFactFiscBool(0)
-            setNdoc("")
-            setClienteBool(0)
             setEnvioEmailBool(0)
             setVariosPagos([])
-            setRazSoc("")
             if (envioEmailBool) {
                 swal("Nueva Factura!", "La factura se ha generado con éxito y pronto le llegará al cliente por email!", "success");
             } else {

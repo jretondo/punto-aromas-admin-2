@@ -30,11 +30,13 @@ const ProdList = ({
     setCopiarDet,
     setGlobalProd,
     pagina,
-    setPagina
+    setPagina,
+    palabraBuscada,
+    setPalabraBuscada,
+    busquedaBool,
+    setBusquedaBool
 }) => {
 
-    const [busquedaBool, setBusquedaBool] = useState(false)
-    const [palabraBuscada, setPalabraBuscada] = useState("")
     const [plantPaginas, setPlantPaginas] = useState([])
     const [ultimaPag, setUltimaPag] = useState(0)
 

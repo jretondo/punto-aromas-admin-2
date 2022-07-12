@@ -96,10 +96,10 @@ const FilaProducto = ({
         setDetallesBool(true)
     }
 
-    const VerCtaCte = (e, id, name) => {
+    const VerCtaCte = (e, cuit, name) => {
         e.preventDefault()
         setVerCtaCteBool(true)
-        setIdCtaCte(id)
+        setIdCtaCte(cuit)
         setNombreCtaCte(name)
     }
 
@@ -163,7 +163,7 @@ const FilaProducto = ({
                         </DropdownItem>
                         <DropdownItem
                             href="#pablo"
-                            onClick={e => VerCtaCte(e, item.id, item.razsoc)}
+                            onClick={e => VerCtaCte(e, item.ndoc, item.razsoc)}
                         >
                             <i className="fas fa-list"></i>
                             Ver Cuenta Corriente

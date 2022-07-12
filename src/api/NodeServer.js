@@ -77,6 +77,7 @@ const usuariosDir = {
         sellers: usuarios + "/sellers",
         ctaCte: usuarios + "/ctaCte",
         payments: usuarios + "/payments",
+        factDet: usuarios + "/factDet"
     }
 }
 
@@ -110,7 +111,8 @@ const clientesDir = {
         ctaCte: clientes + "/ctaCte",
         payments: clientes + "/payments",
         sellers: clientes + "/sellers",
-        pricesType: clientes + "/pricesType"
+        pricesType: clientes + "/pricesType",
+        factDet: clientes + "/factDet"
     }
 }
 

@@ -11,10 +11,9 @@ import swal from 'sweetalert';
 const ModalCobroCtaCte = ({
     modal,
     toggle,
-    factuId,
+    vendedorId,
     actualizar,
-    suma,
-    actualizarOriginal
+    suma
 }) => {
     const [model, setModel] = useState("")
     const [formaPago, setFormaPago] = useState(0)
@@ -28,7 +27,7 @@ const ModalCobroCtaCte = ({
             detalle: model,
             formaPago: formaPago,
             importe: importe,
-            factId: factuId,
+            vendedorId: vendedorId,
             pvId: ptoVta.id
         }
 
@@ -42,7 +41,7 @@ const ModalCobroCtaCte = ({
             .then(async (willDelete) => {
                 if (willDelete) {
                     setProccess(true)
-                    await axios.post(UrlNodeServer.clientesDir.sub.payments, data, {
+                    await axios.post(UrlNodeServer.usuariosDir.sub.payments, data, {
                         responseType: 'arraybuffer',
                         headers: {
                             'Authorization': 'Bearer ' + localStorage.getItem('user-token'),
@@ -61,7 +60,6 @@ const ModalCobroCtaCte = ({
                     }).finally(() => {
                         setProccess(false)
                         actualizar()
-                        actualizarOriginal()
                     })
                 }
             });
@@ -71,7 +69,7 @@ const ModalCobroCtaCte = ({
     return (
         <Modal size={"lg"} isOpen={modal} toggle={toggle}>
             <ModalHeader toggle={toggle}>
-                Cobro de deuda de Cuenta Corriente
+                Pago de Comisiones a Vendedor
             </ModalHeader>
             {
                 proccess ?

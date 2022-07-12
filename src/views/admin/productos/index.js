@@ -73,6 +73,10 @@ const Productos = () => {
     const [nvaActCall, setNvaActCall] = useState(false)
     const [actividadStr, setActividadStr] = useState("")
 
+    const [palabraBuscada, setPalabraBuscada] = useState("")
+
+    const [busquedaBool, setBusquedaBool] = useState(false)
+
     useActividad(
         nvaActCall,
         actividadStr
@@ -339,13 +343,12 @@ const Productos = () => {
                     }
 
                     setListaPrecios(() => preciosL)
-
                     if (imgData.length > 0) {
                         let imagenes = []
                         // eslint-disable-next-line
                         imgData.map((item, key) => {
                             if (item.url_img !== "") {
-                                imagenes.push([item.url_img, item.id])
+                                imagenes.push([item.url_img, item.id_img])
                             }
                             if (key === imgData.length - 1) {
                                 setListaImgNvas(imagenes)
@@ -420,6 +423,10 @@ const Productos = () => {
                                     setEsperar={setEsperar}
                                     pagina={pagina}
                                     setPagina={setPagina}
+                                    palabraBuscada={palabraBuscada}
+                                    setPalabraBuscada={setPalabraBuscada}
+                                    busquedaBool={busquedaBool}
+                                    setBusquedaBool={setBusquedaBool}
                                 />
 
                                 <Row style={

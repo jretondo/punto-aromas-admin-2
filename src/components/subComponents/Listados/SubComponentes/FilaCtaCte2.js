@@ -1,12 +1,11 @@
 import React, { useState } from 'react'
-import { Button, DropdownItem, DropdownMenu, DropdownToggle, Spinner, UncontrolledDropdown } from 'reactstrap'
+import { Button, Spinner } from 'reactstrap'
 import moment from 'moment';
 import formatMoney from 'Function/NumberFormat';
 import axios from 'axios';
 import UrlNodeServer from 'api/NodeServer';
 import swal from 'sweetalert';
 import FileSaver from 'file-saver';
-import ModalDetCtaCte from './modalDetCtaCte';
 
 const FilaCtaCte = ({
     id,
@@ -14,7 +13,6 @@ const FilaCtaCte = ({
     actualizar
 }) => {
     const [wait, setWait] = useState(false)
-    const [modal, setModal] = useState(false)
 
     const getFact = async (idFact, importe) => {
         let query = ""
@@ -48,7 +46,7 @@ const FilaCtaCte = ({
 
     return (
         <>
-            <tr key={id}>
+            <tr key={id} style={parseFloat(item.t_fact) === -2 ? { backgroundColor: "#d2d2d2" } : {}}>
                 <td style={{ textAlign: "center" }}>
                     {moment(item.create_time).format("DD/MM/YYYY H:mm")} Hs
                 </td>
@@ -66,47 +64,24 @@ const FilaCtaCte = ({
                     }
                 </td>
                 <td style={{ textAlign: "center" }}>
-                    $ {formatMoney(item.total_fact)}
+                    {parseFloat(item.t_fact) === -2 ? "-" : ""}   $ {formatMoney(item.comision_total)}
                 </td>
                 <td style={{ textAlign: "center" }}>
-                    $ {formatMoney((item.total_fact - item.monto_cta_cte) + item.monto_pago_cta_cte)}
+                    {parseFloat(item.t_fact) === -2 ? "-" : ""}   $ {parseFloat(item.t_fact) === -2 ?
+                        formatMoney(item.comision_total)
+                        :
+                        formatMoney((item.comision_paga))}
                 </td>
                 <td style={{ textAlign: "center" }}>
-                    $ {formatMoney(item.monto_cta_cte - item.monto_pago_cta_cte)}
+                    $ {parseFloat(item.t_fact) === -2 ?
+                        formatMoney(0)
+                        :
+                        formatMoney(item.comision_total - item.comision_paga)}
                 </td>
-                <td className="text-right">
-                    <UncontrolledDropdown>
-                        <DropdownToggle
-                            className="btn-icon-only text-light"
-                            href="#pablo"
-                            role="button"
-                            size="sm"
-                            color=""
-                            onClick={e => e.preventDefault()}
-                        >
-                            <i className="fas fa-ellipsis-v" />
-                        </DropdownToggle>
-                        <DropdownMenu className="dropdown-menu-arrow" right>
-                            <DropdownItem
-                                href="#pablo"
-                                onClick={e => {
-                                    e.preventDefault()
-                                    setModal(true)
-                                }}
-                            >
-                                <i className="fas fa-search"></i>
-                                Ver detalles
-                            </DropdownItem>
-                        </DropdownMenu>
-                    </UncontrolledDropdown>
+                <td style={{ textAlign: "center" }}>
+                    $ {formatMoney(item.comision_imputar)}
                 </td>
             </tr>
-            <ModalDetCtaCte
-                modal={modal}
-                toggle={() => setModal(!modal)}
-                item={item}
-                actualizarOriginal={actualizar}
-            />
         </>
     )
 }
