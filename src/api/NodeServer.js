@@ -112,7 +112,9 @@ const clientesDir = {
         payments: clientes + "/payments",
         sellers: clientes + "/sellers",
         pricesType: clientes + "/pricesType",
-        factDet: clientes + "/factDet"
+        factDet: clientes + "/factDet",
+        clientesDeudas: clientes + "/clientesDeudas",
+        paymentsGral: clientes + "/paymentsGral"
     }
 }
 

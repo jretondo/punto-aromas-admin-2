@@ -6,6 +6,7 @@ import axios from 'axios';
 import UrlNodeServer from 'api/NodeServer';
 import swal from 'sweetalert';
 import FileSaver from 'file-saver';
+import CompleteCerosLeft from 'Function/CompleteCeroLeft';
 
 const FilaCtaCte = ({
     id,
@@ -64,22 +65,19 @@ const FilaCtaCte = ({
                     }
                 </td>
                 <td style={{ textAlign: "center" }}>
-                    {parseFloat(item.t_fact) === -2 ? "-" : ""}   $ {formatMoney(item.comision_total)}
+                    {`${item.letra} ${CompleteCerosLeft(item.pv, 5)}-${CompleteCerosLeft(item.cbte, 8)}`}
                 </td>
                 <td style={{ textAlign: "center" }}>
-                    {parseFloat(item.t_fact) === -2 ? "-" : ""}   $ {parseFloat(item.t_fact) === -2 ?
-                        formatMoney(item.comision_total)
-                        :
-                        formatMoney((item.comision_paga))}
+                    $ {formatMoney(item.total_fact - item.monto_cta_cte)}
                 </td>
                 <td style={{ textAlign: "center" }}>
-                    $ {parseFloat(item.t_fact) === -2 ?
-                        formatMoney(0)
-                        :
-                        formatMoney(item.comision_total - item.comision_paga)}
+                    $ {formatMoney(item.comision)}
                 </td>
                 <td style={{ textAlign: "center" }}>
-                    $ {formatMoney(item.comision_imputar)}
+                    $ {formatMoney(item.comision_paga)}
+                </td>
+                <td style={{ textAlign: "center" }}>
+                    $ {formatMoney(item.comision - item.comision_paga)}
                 </td>
             </tr>
         </>

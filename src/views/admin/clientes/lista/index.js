@@ -21,7 +21,7 @@ import {
 import ModalSellers from './modalSellers';
 import NdocInput from './ndocInput';
 
-const titulos = ["Razón Social", "Nº Doc.", "Telefóno", "Email", "Cond. IVA", ""]
+
 
 const ListaClientesMod = ({
     setAlertar,
@@ -71,6 +71,8 @@ const ListaClientesMod = ({
     const [clienteSelect, setClienteSelect] = useState({})
     const [domicilio, setDomicilio] = useState("")
     const [priceDefault, setPriceDefault] = useState(null)
+
+    const [deudaClientes, setDeudaClientes] = useState(0)
 
     const NvoProv = (e) => {
         e.preventDefault()
@@ -154,8 +156,12 @@ const ListaClientesMod = ({
     }
 
     const ListaProveedores = async () => {
+        let urlNode = UrlNodeServer.clientesDir.clientes
+        if (parseInt(deudaClientes) === 1) {
+            urlNode = UrlNodeServer.clientesDir.sub.clientesDeudas
+        }
         setEsperar(true)
-        await axios.get(`${UrlNodeServer.clientesDir.clientes}/${pagina}`, {
+        await axios.get(`${urlNode}/${pagina}`, {
             params: {
                 search: palabraBuscada
             },
@@ -207,6 +213,7 @@ const ListaClientesMod = ({
                                         setClienteSelect={setClienteSelect}
                                         toggleSellerAsign={() => setModalSellers(true)}
                                         modal={modalSellers}
+                                        deuda={deudaClientes}
                                     />
                                 )
                             })
@@ -362,7 +369,7 @@ const ListaClientesMod = ({
     useEffect(() => {
         ListaProveedores()
         // eslint-disable-next-line
-    }, [call, pagina])
+    }, [call, pagina, deudaClientes])
 
     useEffect(() => {
         if (detallesBool) {
@@ -395,6 +402,12 @@ const ListaClientesMod = ({
                                         <Row>
                                             <Col md="4" >
                                                 <h2 className="mb-0">Lista de Clientes</h2>
+                                                <Input type="select" value={deudaClientes} onChange={e => {
+                                                    setDeudaClientes(e.target.value)
+                                                }} >
+                                                    <option value={0}>Todos</option>
+                                                    <option value={1}>Con deuda</option>
+                                                </Input>
                                             </Col>
                                             <Col md="8" style={{ textAlign: "right" }}>
                                                 <BusquedaForm
@@ -414,7 +427,7 @@ const ListaClientesMod = ({
 
                                     <ListadoTable
                                         listado={listado}
-                                        titulos={titulos}
+                                        titulos={parseInt(deudaClientes) === 1 ? ["Razón Social", "Nº Doc.", "Telefóno", "Email", "Total Deuda", ""] : ["Razón Social", "Nº Doc.", "Telefóno", "Email", "Cond. IVA", ""]}
                                     />
                                     <CardFooter className="py-4">
                                         <nav aria-label="..." style={{ marginBottom: "20px" }}>

@@ -110,20 +110,26 @@ const FooterListVentas = ({
                     totalImporte={listaCaja.totalCosto}
                     colSize={4}
                 />
-                const costoRow2 = <TotalItemsVtas
-                    totalId={-2}
-                    totalImporte={listaCaja.totalCosto2}
-                    colSize={4}
-                />
-                setTotalesPlant(<>
-                    {efectivoRow}
-                    {mercadoPagoRow}
-                    {debitoRow}
-                    {creditoRow}
-                    {ctacteRow}
-                    {costoRow}
-                    {costoRow2}
-                </>)
+                const admin = localStorage.getItem("user-admin")
+                if (parseInt(admin) === 1) {
+                    setTotalesPlant(<>
+                        {efectivoRow}
+                        {mercadoPagoRow}
+                        {debitoRow}
+                        {creditoRow}
+                        {ctacteRow}
+                        {costoRow}
+                    </>)
+                } else {
+                    setTotalesPlant(<>
+                        {efectivoRow}
+                        {mercadoPagoRow}
+                        {debitoRow}
+                        {creditoRow}
+                        {ctacteRow}
+                    </>)
+                }
+
             } else {
                 setTotalesPlant(
                     <TotalItemsVtas

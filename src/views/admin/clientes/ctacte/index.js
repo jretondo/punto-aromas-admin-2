@@ -107,8 +107,11 @@ const CtaCteListClientMod = ({
                     <ModalCobroCtaCte
                         modal={modalCobro}
                         toggle={() => setModalCobro(!modalCobro)}
-                        clienteID={idCliente}
+                        factuId={idCliente}
                         actualizar={() => setActualizar(!actualizar)}
+                        suma={total}
+                        actualizarOriginal={() => { }}
+                        general={true}
                     />
                     <Row>
                         <Col md="12" style={{ textAlign: "right" }} >
@@ -149,7 +152,12 @@ const CtaCteListClientMod = ({
                                 <CardFooter className="py-4">
                                     <Row style={{ marginBottom: "25px" }}>
                                         <Col md="9">
-
+                                            <Button color="primary" onClick={e => {
+                                                e.preventDefault()
+                                                setModalCobro(true)
+                                            }}>
+                                                Recibir Pago
+                                            </Button>
                                         </Col>
                                         <Col md="3">
                                             <Input style={parseInt(total) > 0 ? { fontWeight: "bold", textAlign: "right", fontSize: "18px", color: "red" } : { fontWeight: "bold", textAlign: "right", fontSize: "18px", color: "red" }} disabled value={"$ " + formatMoney(total)} />

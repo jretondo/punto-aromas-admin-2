@@ -8,7 +8,7 @@ import FilaCtaCte from 'components/subComponents/Listados/SubComponentes/FilaCta
 import formatMoney from 'Function/NumberFormat';
 import ModalCobroCtaCte from './modalPago';
 
-const titulos = ["Fecha", "Factura", "Comisión Total", "Pagado", "Pendiente", "Sin Imputar"]
+const titulos = ["Fecha", "Factura", "Nº Comprobante", "$ Comprobante", "Comisión", "Pagado", "Pendiente"]
 const CtaCteListClientMod = ({
     idCliente,
     nombreCliente,

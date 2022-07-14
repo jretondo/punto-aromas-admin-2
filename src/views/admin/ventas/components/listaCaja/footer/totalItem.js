@@ -17,7 +17,7 @@ const TotalItemsVtas = ({
                 setTituloStr("Total Costo")
                 break;
             case -1:
-                setTituloStr("Total Costo sin Cta Cte")
+                setTituloStr("Total Costo")
                 break;
             case 0:
                 setTituloStr("Total Efectivo")

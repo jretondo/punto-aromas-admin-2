@@ -8,6 +8,7 @@ import {
     DropdownToggle
 } from "reactstrap"
 import swal from 'sweetalert'
+import formatMoney from 'Function/NumberFormat'
 
 const FilaProducto = ({
     id,
@@ -32,7 +33,8 @@ const FilaProducto = ({
     setIdCtaCte,
     setNombreCtaCte,
     toggleSellerAsign,
-    setClienteSelect
+    setClienteSelect,
+    deuda
 }) => {
 
     const EliminarOff = async (e, id, name, primero, pagina) => {
@@ -128,10 +130,11 @@ const FilaProducto = ({
                 <a href={`mailto:${item.email}`}> {item.email}</a>
             </td>
             <td style={{ textAlign: "center" }}>
-                {parseInt(item.cond_iva) === 1 ?
-                    "Res. Inscripto" : parseInt(item.cond_iva) === 6 ?
-                        "Monotributista" : parseInt(item.cond_iva) === 4 ?
-                            "Exento" : "Cons. Final"
+                {parseInt(deuda) === 1 ? "$ " + formatMoney(item.DEUDA) :
+                    parseInt(item.cond_iva) === 1 ?
+                        "Res. Inscripto" : parseInt(item.cond_iva) === 6 ?
+                            "Monotributista" : parseInt(item.cond_iva) === 4 ?
+                                "Exento" : "Cons. Final"
                 }
             </td>
             <td className="text-right">

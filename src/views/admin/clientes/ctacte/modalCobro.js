@@ -14,7 +14,8 @@ const ModalCobroCtaCte = ({
     factuId,
     actualizar,
     suma,
-    actualizarOriginal
+    actualizarOriginal,
+    general
 }) => {
     const [model, setModel] = useState("")
     const [formaPago, setFormaPago] = useState(0)
@@ -24,12 +25,21 @@ const ModalCobroCtaCte = ({
     const [proccess, setProccess] = useState(false)
 
     const registrarCobro = () => {
-        const data = {
+        let data = {
             detalle: model,
             formaPago: formaPago,
             importe: importe,
             factId: factuId,
             pvId: ptoVta.id
+        }
+        if (general) {
+            data = {
+                detalle: model,
+                formaPago: formaPago,
+                importe: importe,
+                nDocCliente: factuId,
+                pvId: ptoVta.id
+            }
         }
 
         swal({
@@ -41,8 +51,12 @@ const ModalCobroCtaCte = ({
         })
             .then(async (willDelete) => {
                 if (willDelete) {
+                    let urlServer = UrlNodeServer.clientesDir.sub.payments
+                    if (general) {
+                        urlServer = UrlNodeServer.clientesDir.sub.paymentsGral
+                    }
                     setProccess(true)
-                    await axios.post(UrlNodeServer.clientesDir.sub.payments, data, {
+                    await axios.post(urlServer, data, {
                         responseType: 'arraybuffer',
                         headers: {
                             'Authorization': 'Bearer ' + localStorage.getItem('user-token'),
