@@ -4,7 +4,7 @@ import swal from 'sweetalert';
 import ListadoTable from '../Listados/ListadoTable';
 import FilaPrecio from '../Listados/SubComponentes/FilaPrecio';
 
-const titulos = ["Tipo de precio", "($) Venta", ""]
+const titulos = ["Tipo de precio", "($) Venta", "Cant. Min.", ""]
 
 const PreciosProducto = ({
     costo,
@@ -14,17 +14,15 @@ const PreciosProducto = ({
 }) => {
     const [preciosDisp, setPreciosDisp] = useState(preciosList)
     const [optionPlant, setOptionPlant] = useState(<></>)
-    const [modal1, setModal1] = useState(false)
     const [modal2, setModal2] = useState(false)
     const [venta, setVenta] = useState(0)
     const [porcVta, setPorcVta] = useState(0)
     const [roundBool, setRoundBool] = useState(false)
+    const [cantMin, setCantMin] = useState(1)
     const [round, setRound] = useState(0)
     const [tipoPrecio, setTipoPrecio] = useState("")
     const [listado, setListado] = useState(<tr><td>No hay precios agregados</td></tr>)
-    const toggleModal1 = () => {
-        setModal1(!modal1)
-    }
+
     const toggleModal2 = () => {
         setModal2(!modal2)
     }
@@ -60,7 +58,8 @@ const PreciosProducto = ({
                 order: tipoPrecio.order,
                 porcVta: porcVta,
                 round: round,
-                roundBool: roundBool
+                roundBool: roundBool,
+                cant_min: cantMin
             }])
         } else {
             swal("Precios", "No hay más precios disponibles para agregar", "error")
@@ -68,8 +67,18 @@ const PreciosProducto = ({
 
     }
 
+    const disponibles = () => {
+        let disponibles = preciosDisp
+        // eslint-disable-next-line
+        listaPrecios.map((item, key) => {
+            disponibles = disponibles.filter(item2 => item2.type !== item.type_price_name)
+            if (key === listaPrecios.length - 1) {
+                setPreciosDisp(() => disponibles)
+            }
+        })
+    }
+
     const recalcular = () => {
-        console.log('listaPrecios :>> ', listaPrecios);
         if (listaPrecios.length > 0) {
             let preciosNvos = []
             // eslint-disable-next-line
@@ -85,7 +94,8 @@ const PreciosProducto = ({
                     order: item.order,
                     porcVta: item.porcVta,
                     round: item.round,
-                    roundBool: item.roundBool
+                    roundBool: item.roundBool,
+                    cant_min: cantMin
                 })
                 if (key === listaPrecios.length - 1) {
                     setListaPrecios(() => preciosNvos)
@@ -152,6 +162,11 @@ const PreciosProducto = ({
         // eslint-disable-next-line 
     }, [listaPrecios])
 
+    useEffect(() => {
+        disponibles()
+        // eslint-disable-next-line
+    }, [listaPrecios])
+
     return (<>
 
         <Col style={{ border: "1px solid #8898aa", marginTop: "15px", marginBottom: "15px", paddingTop: "10px", paddingInline: "25px", borderRadius: "5px" }} >
@@ -193,7 +208,7 @@ const PreciosProducto = ({
             toggle={toggleModal2}
             size={"lg"}
         >
-            <ModalHeader toggle={toggleModal1}>Nuevo Precio</ModalHeader>
+            <ModalHeader toggle={toggleModal2}>Nuevo Precio</ModalHeader>
             <ModalBody>
                 <Row>
                     <Col md="6" >
@@ -235,7 +250,7 @@ const PreciosProducto = ({
                     </Col>
                 </Row>
                 <Row>
-                    <Col md="6" >
+                    <Col md="4" >
                         <FormGroup>
                             <label
                                 className="form-control-label"
@@ -246,7 +261,22 @@ const PreciosProducto = ({
                             <Input style={{ fontSize: "25px" }} min={0.01} step={0.01} type="text" id="precioVtaTxt" value={venta} onChange={e => setVenta(e.target.value)} />
                         </FormGroup>
                     </Col>
-                    <Col lg="6">
+                    {
+                        parseInt(tipoPrecio.order) > 0 && parseInt(tipoPrecio.order) < 4 ?
+                            <Col md="4" >
+                                <FormGroup>
+                                    <label
+                                        className="form-control-label"
+                                        htmlFor="precioVtaTxt"
+                                    >
+                                        Cant. Min.
+                                    </label>
+                                    <Input style={{ fontSize: "25px" }} min={0} step={1} type="text" id="precioVtaTxt" value={cantMin} onChange={e => setCantMin(e.target.value)} />
+                                </FormGroup>
+                            </Col> : null
+                    }
+
+                    <Col lg="4">
                         <FormGroup>
                             <FormGroup check>
                                 <Label check>

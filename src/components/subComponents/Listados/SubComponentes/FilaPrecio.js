@@ -26,6 +26,9 @@ const FilaPrecio = ({
             <td style={{ textAlign: "center" }}>
                 $ {formatMoney(item.sell_price)}
             </td>
+            <td style={{ textAlign: "center" }}>
+                {item.cant_min}
+            </td>
             {
                 muestra ? null :
                     <td>

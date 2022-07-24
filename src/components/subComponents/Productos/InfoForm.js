@@ -20,16 +20,15 @@ const InfoForm = ({
     setListaPrecios,
     listaVar,
     setListaVar,
-    detallesBool,
-    codBarras,
-    setCodBarras,
+    codProd,
+    setCodProd,
     preciosList
 }) => {
 
     return (
         <>
             <Row>
-                <Col lg={6}>
+                <Col lg={4}>
                     <FormGroup>
                         <label
                             className="form-control-label"
@@ -48,7 +47,22 @@ const InfoForm = ({
                         />
                     </FormGroup>
                 </Col>
-                <Col md={3}>
+                <Col md="3">
+                    <FormGroup>
+                        <Label>
+                            Córdigo
+                        </Label>
+                        <Input
+                            type="text"
+                            value={codProd}
+                            onChange={e => setCodProd(e.target.value)}
+                            placeholder="Código del Producto..."
+                            className="form-control-alternative"
+                        />
+                    </FormGroup>
+
+                </Col>
+                <Col md={2}>
                     <FormGroup>
                         <Label>
                             Costo

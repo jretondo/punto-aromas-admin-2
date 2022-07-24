@@ -77,6 +77,8 @@ const Productos = () => {
 
     const [busquedaBool, setBusquedaBool] = useState(false)
 
+    const [codProd, setCodProd] = useState("")
+
     useActividad(
         nvaActCall,
         actividadStr
@@ -163,6 +165,9 @@ const Productos = () => {
             let mayor3 = 0
             let revende = 0
             let supermer = 0
+            let cantMay1 = 0
+            let cantMay2 = 0
+            let cantMay3 = 0
             // eslint-disable-next-line
             listaPrecios.map((item) => {
                 switch (parseInt(item.order)) {
@@ -171,12 +176,15 @@ const Productos = () => {
                         break;
                     case 1:
                         mayor1 = item.sell_price
+                        cantMay1 = item.cant_min
                         break;
                     case 2:
                         mayor2 = item.sell_price
+                        cantMay2 = item.cant_min
                         break;
                     case 3:
                         mayor3 = item.sell_price
+                        cantMay3 = item.cant_min
                         break;
                     case 4:
                         revende = item.sell_price
@@ -192,7 +200,11 @@ const Productos = () => {
             formData.append("mayorista_1", mayor1);
             formData.append("mayorista_2", mayor2);
             formData.append("mayorista_3", mayor3);
+            formData.append("cant_mayor1", cantMay1);
+            formData.append("cant_mayor2", cantMay2);
+            formData.append("cant_mayor3", cantMay3);
             formData.append("supermercado", supermer);
+            formData.append("cod_prod", codProd);
             formData.append("revendedor", revende);
             formData.append("iva", 0);
             async function postData(url = '', data = {}) {
@@ -280,6 +292,7 @@ const Productos = () => {
                     setDescrCortaNvo(gralData.short_descr)
                     setCosto(gralData.costo)
                     setUnidad(gralData.unidad)
+                    setCodProd(gralData.cod_prod)
                     let preciosL = []
                     if (gralData.minorista > 0) {
                         preciosL.push({
@@ -288,7 +301,8 @@ const Productos = () => {
                             order: 0,
                             porcVta: Math.round(((gralData.minorista - gralData.costo) / gralData.costo) * 100),
                             round: 0,
-                            roundBool: false
+                            roundBool: false,
+                            cant_min: 0
                         })
                     }
                     if (gralData.mayorista_1 > 0) {
@@ -298,7 +312,8 @@ const Productos = () => {
                             order: 1,
                             porcVta: Math.round(((gralData.mayorista_1 - gralData.costo) / gralData.costo) * 100),
                             round: 0,
-                            roundBool: false
+                            roundBool: false,
+                            cant_min: gralData.cant_mayor1
                         })
                     }
                     if (gralData.mayorista_2 > 0) {
@@ -308,7 +323,8 @@ const Productos = () => {
                             order: 2,
                             porcVta: Math.round(((gralData.mayorista_2 - gralData.costo) / gralData.costo) * 100),
                             round: 0,
-                            roundBool: false
+                            roundBool: false,
+                            cant_min: gralData.cant_mayor2
                         })
                     }
                     if (gralData.mayorista_3 > 0) {
@@ -318,7 +334,8 @@ const Productos = () => {
                             order: 3,
                             porcVta: Math.round(((gralData.mayorista_3 - gralData.costo) / gralData.costo) * 100),
                             round: 0,
-                            roundBool: false
+                            roundBool: false,
+                            cant_min: gralData.cant_mayor3
                         })
                     }
                     if (gralData.revendedor > 0) {
@@ -328,7 +345,8 @@ const Productos = () => {
                             order: 4,
                             porcVta: Math.round(((gralData.revendedor - gralData.costo) / gralData.costo) * 100),
                             round: 0,
-                            roundBool: false
+                            roundBool: false,
+                            cant_min: 0
                         })
                     }
                     if (gralData.supermercado > 0) {
@@ -338,7 +356,8 @@ const Productos = () => {
                             order: 4,
                             porcVta: Math.round(((gralData.supermercado - gralData.costo) / gralData.costo) * 100),
                             round: 0,
-                            roundBool: false
+                            roundBool: false,
+                            cant_min: 0
                         })
                     }
 
@@ -485,6 +504,8 @@ const Productos = () => {
                                                             setListaVar={setListaVar}
                                                             detallesBool={detallesBool}
                                                             preciosList={preciosList}
+                                                            codProd={codProd}
+                                                            setCodProd={setCodProd}
                                                         />
                                                         <Row>
                                                             <hr className="my-4" />
