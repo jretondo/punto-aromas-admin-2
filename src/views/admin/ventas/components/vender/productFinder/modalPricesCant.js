@@ -14,7 +14,8 @@ const ModalPricesCant = ({
     cantProd,
     clienteData,
     setCantProd,
-    setProdText
+    setProdText,
+    clienteBool
 }) => {
     const [listPrices, setListPrices] = useState(<tr><td>No hay precios asociados</td></tr>)
     const { NewProdSell } = useContext(productsSellContext)
@@ -82,7 +83,7 @@ const ModalPricesCant = ({
                     } else if (pricesData.length === 1) {
                         addProduct(data, cant, pricesData, 0)
                     } else {
-                        if (clienteData.price_default) {
+                        if (clienteData.price_default && parseInt(clienteBool) === 1) {
                             const precioRevende = data.revendedor
                             if (parseFloat(precioRevende) === 0) {
                                 swal("Producto sin comisión!", "Este producto no posee precio de reventa! Lo que no dejará ninguna comisión!", "info")

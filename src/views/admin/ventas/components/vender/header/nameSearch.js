@@ -49,6 +49,9 @@ const NameSearch = ({
                         if (cliente.email.length > 0) {
                             setEmailCliente(cliente.email)
                             setEnvioEmailBool(1)
+                        } else {
+                            setEmailCliente("")
+                            setEnvioEmailBool(0)
                         }
                     } else {
                         setClienteData({ id: 0, price_default: "" })

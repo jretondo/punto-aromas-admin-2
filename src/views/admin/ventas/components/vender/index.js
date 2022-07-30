@@ -74,26 +74,43 @@ const Ventas = ({
     }
 
     const generarFactura = async () => {
-        const data = {
-            dataFact: {
-                fecha: moment(new Date()).format("YYYY-MM-DD"),
-                pv_id: ptoVta.id,
-                fiscal: factFiscBool,
-                forma_pago: formaPago,
-                cond_iva: condIvaCli,
-                enviar_email: envioEmailBool,
-                cliente_email: emailCliente,
-                cliente_bool: parseInt(clienteBool),
-                cliente_tdoc: parseInt(clienteBool) === 0 ? 99 : tipoDoc,
-                cliente_ndoc: ndoc,
-                cliente_name: razSoc,
-                lista_prod: productsSellList,
-                descuentoPerc: descuentoPerc,
-                variosPagos: variosPagos,
-                costoEnvio: costoEnvio
-            },
-            fiscal: factFiscBool,
-            totalRevende: totalRevende
+        let data
+        if (parseInt(clienteBool) === 0) {
+            data = {
+                dataFact: {
+                    fecha: moment(new Date()).format("YYYY-MM-DD"),
+                    pv_id: ptoVta.id,
+                    fiscal: factFiscBool,
+                    forma_pago: formaPago,
+                    cond_iva: condIvaCli,
+                    enviar_email: envioEmailBool,
+                    cliente_email: emailCliente,
+                    lista_prod: productsSellList,
+                    descuentoPerc: descuentoPerc,
+                    variosPagos: variosPagos
+                },
+                fiscal: factFiscBool
+            }
+        } else {
+            data = {
+                dataFact: {
+                    fecha: moment(new Date()).format("YYYY-MM-DD"),
+                    pv_id: ptoVta.id,
+                    fiscal: factFiscBool,
+                    forma_pago: formaPago,
+                    cond_iva: condIvaCli,
+                    enviar_email: envioEmailBool,
+                    cliente_email: emailCliente,
+                    cliente_bool: parseInt(clienteBool),
+                    cliente_tdoc: tipoDoc,
+                    cliente_ndoc: ndoc,
+                    cliente_name: razSoc,
+                    lista_prod: productsSellList,
+                    descuentoPerc: descuentoPerc,
+                    variosPagos: variosPagos
+                },
+                fiscal: factFiscBool
+            }
         }
         if (parseInt(formaPago) === 5 && parseFloat(total) !== parseFloat(totalPrecio)) {
             swal("Error: Total del pago!", "Revise que el total del pago debe ser igual al total de la factura.", "error");
@@ -152,6 +169,15 @@ const Ventas = ({
             setFormaPago(0)
             setFactFiscBool(0)
             setEnvioEmailBool(0)
+            setClienteBool(1)
+            setFactFiscBool(0)
+            setTipoDoc(80)
+
+            setEnvioEmailBool(0)
+            setEmailCliente("")
+            setNdoc("")
+            setRazSoc("")
+
             setVariosPagos([])
             if (envioEmailBool) {
                 swal("Nueva Factura!", "La factura se ha generado con éxito y pronto le llegará al cliente por email!", "success");
@@ -221,6 +247,7 @@ const Ventas = ({
 
                             <ProductFinder
                                 clienteData={clienteData}
+                                clienteBool={clienteBool}
                             />
 
                             <ProdListSell />

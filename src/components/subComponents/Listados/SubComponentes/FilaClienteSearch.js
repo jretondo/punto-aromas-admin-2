@@ -13,9 +13,15 @@ const FilaClientesSearch = ({
 
     const SelectCuit = (i) => {
         setNdoc(i.ndoc)
-        setTipoDoc(i.cuit)
+        if (parseInt(i.cuit) === 0) {
+            setTipoDoc(80)
+        } else {
+            setTipoDoc(96)
+        }
+
         setEmailCliente(i.email)
         setRazSoc(i.razsoc)
+
         if (i.email.length > 0) {
             setEnvioEmailBool(1)
         } else {
