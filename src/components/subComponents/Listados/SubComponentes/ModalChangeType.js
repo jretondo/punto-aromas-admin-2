@@ -96,16 +96,37 @@ const ModalChangeType = ({
                                 <FormGroup>
                                     <Label for="factFiscTxt">Forma de Pago</Label>
                                     <Input type="select" value={payType} id="typelist" onChange={e => setPayType(e.target.value)} >
-                                        <option value={0}>Efectivo</option>
                                         {
-                                            parseInt(item.fiscal) === 1 ?
-                                                <>
-                                                    <option value={1}>Mercado Pago</option>
-                                                    <option value={2}>Débito</option>
-                                                    <option value={3}>Crédito</option>
-                                                </>
-                                                :
-                                                null
+                                            parseInt(item.forma_pago) !== 0 ?
+                                                <option value={0}>Efectivo</option> : null
+                                        }
+                                        {
+                                            parseInt(item.forma_pago) !== 1 ?
+                                                <option value={1}>Mercado Pago</option> : null
+                                        }
+                                        {
+                                            parseInt(item.forma_pago) !== 2 ?
+                                                <option value={2}>Débito</option> : null
+                                        }
+                                        {
+                                            parseInt(item.forma_pago) !== 3 ?
+                                                <option value={3}>Crédito</option> : null
+                                        }
+                                        {
+                                            parseInt(item.forma_pago) !== 6 ?
+                                                <option value={6}>Cheque</option> : null
+                                        }
+                                        {
+                                            parseInt(item.forma_pago) !== 7 ?
+                                                <option value={7}>Transferencia</option> : null
+                                        }
+
+                                        {
+                                            parseInt(item.t_fact) >= 0 ?
+                                                parseInt(item.forma_pago) !== 4 ?
+                                                    item.n_doc_cliente.length > 5 ?
+                                                        <option value={4}>Cuenta Corriente</option>
+                                                        : null : null : null
                                         }
                                     </Input>
                                 </FormGroup>
@@ -125,6 +146,7 @@ const ModalChangeType = ({
                                                 e.preventDefault()
                                                 setModal(false)
                                             }}
+                                            disabled={parseFloat(item.monto_pago_cta_cte) === 0 ? false : true}
                                         >
                                             Cancelar
                                         </button>

@@ -13,7 +13,9 @@ const VentasListMod = ({
     setPagina,
     loading,
     setActualizar,
-    actualizar
+    actualizar,
+    setIdFact,
+    openDev
 }) => {
     const [call, setCall] = useState(false)
     const [plantPaginas, setPlantPaginas] = useState(<></>)
@@ -40,6 +42,8 @@ const VentasListMod = ({
                                 setPagina={setPagina}
                                 setActualizar={setActualizar}
                                 actualizar={actualizar}
+                                setIdFact={setIdFact}
+                                openDev={openDev}
                             />
                         )
                     })
