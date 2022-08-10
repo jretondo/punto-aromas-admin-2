@@ -19,6 +19,11 @@ const FooterListVentas = ({
             let credito = 0
             let ctacteRow = <></>
             let ctacte = 0
+            let cheque = 0
+            let chequeRow = <></>
+            let transf = 0
+            let transfRow = <></>
+
             const totales = listaCaja.totales
             const totales2 = listaCaja.totales2
             if (totales2.length > 0) {
@@ -39,6 +44,12 @@ const FooterListVentas = ({
                             break;
                         case 4:
                             ctacte = ctacte + parseFloat(item.SUMA)
+                            break;
+                        case 6:
+                            cheque = cheque + parseFloat(item.SUMA)
+                            break;
+                        case 7:
+                            transf = transf + parseFloat(item.SUMA)
                             break;
                         default:
                             break;
@@ -63,6 +74,12 @@ const FooterListVentas = ({
                             break;
                         case 4:
                             ctacte = ctacte + parseFloat(item.SUMA)
+                            break;
+                        case 6:
+                            cheque = cheque + parseFloat(item.SUMA)
+                            break;
+                        case 7:
+                            transf = transf + parseFloat(item.SUMA)
                             break;
                         default:
                             break;
@@ -105,6 +122,20 @@ const FooterListVentas = ({
                         colSize={4}
                     />
                 }
+                if (cheque > 0) {
+                    chequeRow = <TotalItemsVtas
+                        totalId={6}
+                        totalImporte={cheque}
+                        colSize={4}
+                    />
+                }
+                if (transf > 0) {
+                    transfRow = <TotalItemsVtas
+                        totalId={7}
+                        totalImporte={transf}
+                        colSize={4}
+                    />
+                }
                 const costoRow = <TotalItemsVtas
                     totalId={-1}
                     totalImporte={listaCaja.totalCosto}
@@ -117,6 +148,8 @@ const FooterListVentas = ({
                         {mercadoPagoRow}
                         {debitoRow}
                         {creditoRow}
+                        {chequeRow}
+                        {transfRow}
                         {ctacteRow}
                         {costoRow}
                     </>)
@@ -126,6 +159,8 @@ const FooterListVentas = ({
                         {mercadoPagoRow}
                         {debitoRow}
                         {creditoRow}
+                        {chequeRow}
+                        {transfRow}
                         {ctacteRow}
                     </>)
                 }

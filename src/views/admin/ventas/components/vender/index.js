@@ -54,7 +54,7 @@ const Ventas = ({
 
     const [modal1, setModal1] = useState(false)
 
-    const { totalPrecio, cancelarCompra, productsSellList, totalRevende } = useContext(productsSellContext)
+    const { totalPrecio, cancelarCompra, productsSellList } = useContext(productsSellContext)
 
     const cancelar = () => {
         swal({

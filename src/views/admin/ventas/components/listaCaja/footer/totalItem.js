@@ -34,7 +34,10 @@ const TotalItemsVtas = ({
             case 4:
                 setTituloStr("Total Cuenta Corriente")
                 break;
-            case 5:
+            case 6:
+                setTituloStr("Total Cheques")
+                break;
+            case 7:
                 setTituloStr("Total Transferencias")
                 break;
 
