@@ -84,16 +84,27 @@ const ModalPricesCant = ({
                         addProduct(data, cant, pricesData, 0)
                     } else {
                         if (clienteData.price_default && parseInt(clienteBool) === 1) {
-                            const precioRevende = data.revendedor
-                            if (parseFloat(precioRevende) === 0) {
-                                swal("Producto sin comisión!", "Este producto no posee precio de reventa! Lo que no dejará ninguna comisión!", "info")
-                            }
-                            setDataProd(data)
-                            setPrices(pricesData)
-                            setRevProd(precioRevende)
                             const price = pricesData.filter(item => item.type_price_name === clienteData.price_default)
+
+
                             if (price.length > 0) {
+                                const precioRevende = data.revendedor
+                                if (parseFloat(precioRevende) === 0) {
+                                    swal("Producto sin comisión!", "Este producto no posee precio de reventa! Lo que no dejará ninguna comisión!", "info")
+                                }
+                                setDataProd(data)
+                                setPrices(pricesData)
+                                setRevProd(precioRevende)
                                 addProduct(data, cant, price[0], data.revendedor)
+                            } else {
+                                const precioRevende = data.revendedor
+                                if (parseFloat(precioRevende) === 0) {
+                                    swal("Producto sin comisión!", "Este producto no posee precio de reventa! Lo que no dejará ninguna comisión!", "info")
+                                }
+                                setDataProd(data)
+                                setPrices(pricesData)
+                                setRevProd(precioRevende)
+                                addProduct(data, cant, pricesData[0], data.revendedor)
                             }
                         } else {
                             const precioRevende = data.revendedor

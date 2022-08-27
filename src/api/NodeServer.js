@@ -51,7 +51,8 @@ const productsDir = {
         cost: products + "/cost",
         prices: products + "/prices",
         var: products + "/var",
-        images: products + "/images"
+        images: products + "/images",
+        prodListPDF: products + "/prodListPDF"
     }
 }
 const authDir = {

@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react'
 import ListadoTable from 'components/subComponents/Listados/ListadoTable';
 import Paginacion from 'components/subComponents/Paginacion/Paginacion';
 import BusquedaProdForm from 'components/subComponents/Productos/BusquedaForm';
-import { Card, CardFooter, CardHeader, Col, Form, FormGroup, Input, Label, Row } from 'reactstrap';
+import { Button, Card, CardFooter, CardHeader, Col, Form, FormGroup, Input, Label, Row } from 'reactstrap';
 import UrlNodeServer from '../../../../../api/NodeServer';
 import axios from 'axios';
 import FilaProducto from 'components/subComponents/Listados/SubComponentes/FilaProducto';
 import Spinner from 'reactstrap/lib/Spinner';
+import swal from 'sweetalert';
+import FileSaver from 'file-saver';
 
 const titulos = ["Producto", "Proveedor", "Marca", "Costo", "% Gan.", ""]
 
@@ -220,6 +222,40 @@ const ProdList = ({
             })
     }
 
+    const pdfProdList = async () => {
+        setEsperar(true)
+        let data = {
+            query: ""
+        }
+        if (busquedaBool) {
+            data = {
+                query: palabraBuscada
+            }
+        }
+        await axios.get(UrlNodeServer.productsDir.sub.prodListPDF, {
+            responseType: 'arraybuffer',
+            params: data,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('user-token'),
+                Accept: 'application/pdf',
+            }
+        })
+            .then(res => {
+                let headerLine = res.headers['content-disposition'];
+                const largo = parseInt(headerLine.length)
+                let filename = headerLine.substring(21, largo);
+                var blob = new Blob([res.data], { type: "application/pdf" });
+                FileSaver.saveAs(blob, filename);
+                swal("Listado de Caja!", "El listado de caja ha sido generado con éxito!", "success");
+            })
+            .catch((error) => {
+                console.log('error :>> ', error);
+                swal("Listado de Caja!", "Hubo un error al querer listar la caja!", "error");
+            }).finally(() => {
+                setEsperar(false)
+            })
+    }
+
     return (
         <Row style={
             detallesBool ?
@@ -257,124 +293,134 @@ const ProdList = ({
                                 titulos={titulos}
                             />
                             <CardFooter className="py-4">
-                                <Col md="8" style={{ marginTop: "30px" }}>
-                                    {varCostoBool ?
-                                        <Form onSubmit={e => {
-                                            e.preventDefault();
-                                            VariacionCosto();
-                                        }}>
-                                            <Row>
-                                                <Col md="4" >
-                                                    <FormGroup tag="fieldset" style={{ textAlign: "right" }}>
-                                                        <FormGroup check>
+                                <Row>
+                                    <Col md="8" style={{ marginTop: "30px" }}>
+                                        {varCostoBool ?
+                                            <Form onSubmit={e => {
+                                                e.preventDefault();
+                                                VariacionCosto();
+                                            }}>
+                                                <Row>
+                                                    <Col md="3" >
+                                                        <FormGroup tag="fieldset" style={{ textAlign: "right" }}>
+                                                            <FormGroup check>
+                                                                <Input
+                                                                    name="radio1"
+                                                                    id="radio1"
+                                                                    type="radio"
+                                                                    checked={aumento}
+                                                                    onChange={e => setAumento(e.target.checked)}
+                                                                />
+                                                                {' '}
+                                                                <Label check for="radio1" >
+                                                                    Aumento
+                                                                </Label>
+                                                            </FormGroup>
+                                                            <FormGroup check>
+                                                                <Input
+                                                                    name="radio1"
+                                                                    id="radio2"
+                                                                    type="radio"
+                                                                    checked={!aumento}
+                                                                    onChange={e => setAumento(!e.target.checked)}
+                                                                />
+                                                                {' '}
+                                                                <Label check for="radio2" >
+                                                                    Descuento
+                                                                </Label>
+                                                            </FormGroup>
+                                                        </FormGroup>
+                                                    </Col>
+                                                    <Col md="3" >
+                                                        <FormGroup>
                                                             <Input
-                                                                name="radio1"
-                                                                id="radio1"
-                                                                type="radio"
-                                                                checked={aumento}
-                                                                onChange={e => setAumento(e.target.checked)}
+                                                                value={porc}
+                                                                onChange={e => setPorc(e.target.value)}
+                                                                id="porcentajeTxt"
+                                                                placeholder="Porcentaje a variar..."
+                                                                type="number"
                                                             />
-                                                            {' '}
-                                                            <Label check for="radio1" >
-                                                                Aumento
-                                                            </Label>
                                                         </FormGroup>
-                                                        <FormGroup check>
-                                                            <Input
-                                                                name="radio1"
-                                                                id="radio2"
-                                                                type="radio"
-                                                                checked={!aumento}
-                                                                onChange={e => setAumento(!e.target.checked)}
-                                                            />
-                                                            {' '}
-                                                            <Label check for="radio2" >
-                                                                Descuento
-                                                            </Label>
-                                                        </FormGroup>
-                                                    </FormGroup>
-                                                </Col>
-                                                <Col md="4" >
-                                                    <FormGroup>
-                                                        <Input
-                                                            value={porc}
-                                                            onChange={e => setPorc(e.target.value)}
-                                                            id="porcentajeTxt"
-                                                            placeholder="Porcentaje a variar..."
-                                                            type="number"
-                                                        />
-                                                    </FormGroup>
-                                                </Col>
-                                                <Col md="4" style={{ textAlign: "left" }} >
-                                                    <Row>
-                                                        {
-                                                            roundBool ?
-                                                                <Input style={{ fontSize: "20px" }} type="select" id="unidadesTxt" onChange={e => setRound(e.target.value)} value={round}  >
-                                                                    <option value={0} >1,00</option>
-                                                                    <option value={-1} >10,00</option>
-                                                                    <option value={-2} >100,00</option>
-                                                                </Input> : null
-                                                        }
-                                                        <FormGroup check>
-                                                            <Input type="checkbox" id="roundTxt" checked={roundBool} onChange={e => setRoundBool(e.target.checked)} />
-                                                            {' '}
-                                                            <Label check for="roundTxt">
-                                                                Redondear
-                                                            </Label>
-                                                        </FormGroup>
-                                                    </Row>
-                                                </Col>
-                                            </Row>
-                                            <Row>
-                                                <Col md="12" style={{ textAlign: "center" }} >
+                                                    </Col>
+                                                    <Col md="3" style={{ textAlign: "left" }} >
+                                                        <Row>
+                                                            {
+                                                                roundBool ?
+                                                                    <Input style={{ fontSize: "20px" }} type="select" id="unidadesTxt" onChange={e => setRound(e.target.value)} value={round}  >
+                                                                        <option value={0} >1,00</option>
+                                                                        <option value={-1} >10,00</option>
+                                                                        <option value={-2} >100,00</option>
+                                                                    </Input> : null
+                                                            }
+                                                            <FormGroup check>
+                                                                <Input type="checkbox" id="roundTxt" checked={roundBool} onChange={e => setRoundBool(e.target.checked)} />
+                                                                {' '}
+                                                                <Label check for="roundTxt">
+                                                                    Redondear
+                                                                </Label>
+                                                            </FormGroup>
+                                                        </Row>
+                                                    </Col>
+                                                </Row>
+                                                <Row>
+                                                    <Col md="12" style={{ textAlign: "center" }} >
+                                                        <button
+                                                            className="btn btn-primary"
+                                                            style={{ margin: "20px", width: "150px", marginTop: "10px" }}
+                                                            type="submit"
+                                                        >
+                                                            Aplicar
+                                                        </button>
+
+                                                        <button
+                                                            className="btn btn-danger"
+                                                            style={{ margin: "20px", width: "150px", marginTop: "10px" }}
+                                                            onClick={e => {
+                                                                e.preventDefault();
+                                                                setVarCostoBool(false);
+                                                            }}
+                                                        >
+                                                            Cancelar
+                                                        </button>
+                                                    </Col>
+                                                </Row>
+                                            </Form>
+                                            : <Row>
+                                                <Col style={{ marginTop: "20px", textAlign: "center" }}>
                                                     <button
                                                         className="btn btn-primary"
-                                                        style={{ margin: "20px", width: "150px", marginTop: "10px" }}
-                                                        type="submit"
-                                                    >
-                                                        Aplicar
-                                                    </button>
-
-                                                    <button
-                                                        className="btn btn-danger"
-                                                        style={{ margin: "20px", width: "150px", marginTop: "10px" }}
+                                                        style={nvaOffer ? { display: "none", width: "160px", margin: "auto" } : { display: "block", width: "160px", margin: "auto" }}
                                                         onClick={e => {
                                                             e.preventDefault();
-                                                            setVarCostoBool(false);
+                                                            setNvaOffer(true);
+                                                            ResetStatesForm();
                                                         }}
                                                     >
-                                                        Cancelar
+                                                        Nuevo Producto
                                                     </button>
                                                 </Col>
-                                            </Row>
-                                        </Form>
-                                        : <Row>
-                                            <Col style={{ marginTop: "20px", textAlign: "center" }}>
-                                                <button
-                                                    className="btn btn-primary"
-                                                    style={nvaOffer ? { display: "none", width: "160px", margin: "auto" } : { display: "block", width: "160px", margin: "auto" }}
-                                                    onClick={e => {
-                                                        e.preventDefault();
-                                                        setNvaOffer(true);
-                                                        ResetStatesForm();
-                                                    }}
-                                                >
-                                                    Nuevo Producto
-                                                </button>
-                                            </Col>
-                                            <Col style={{ marginTop: "20px", textAlign: "center" }}>
-                                                <button
-                                                    className="btn btn-primary"
-                                                    style={nvaOffer ? { display: "none", width: "160px", margin: "auto" } : { display: "block", width: "160px", margin: "auto" }}
-                                                    onClick={e => {
-                                                        e.preventDefault();
-                                                        setVarCostoBool(true);
-                                                    }}>
-                                                    Variar Costos
-                                                </button>
-                                            </Col>
-                                        </Row>}
-                                </Col>
+                                                <Col style={{ marginTop: "20px", textAlign: "center" }}>
+                                                    <button
+                                                        className="btn btn-primary"
+                                                        style={nvaOffer ? { display: "none", width: "160px", margin: "auto" } : { display: "block", width: "160px", margin: "auto" }}
+                                                        onClick={e => {
+                                                            e.preventDefault();
+                                                            setVarCostoBool(true);
+                                                        }}>
+                                                        Variar Costos
+                                                    </button>
+                                                </Col>
+                                            </Row>}
+                                    </Col>
+                                    <Col md="3" style={{ marginTop: "50px" }}>
+                                        <Button color="primary" onClick={e => {
+                                            e.preventDefault()
+                                            pdfProdList()
+                                        }}>
+                                            Descargar Lista
+                                        </Button>
+                                    </Col>
+                                </Row>
                                 <Paginacion
                                     setPagina={setPagina}
                                     setCall={setCall}
