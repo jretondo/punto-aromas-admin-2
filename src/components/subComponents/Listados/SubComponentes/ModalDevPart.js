@@ -67,17 +67,39 @@ const ModalDevPart = ({
         createDelete()
         createStay()
     }
+
+    const changeStayCant = (key, item, newCant) => {
+        const list = detStay
+        let newItem = list[key]
+        newItem.cant_prod = newCant
+        list.splice(key, 1, newItem)
+        setDetStay(() => list)
+        createStay()
+    }
+
+    const changeDeleteCant = (key, item, newCant) => {
+        const list = detDelete
+        let newItem = list[key]
+        newItem.cant_prod = newCant
+        list.splice(key, 1, newItem)
+        setDetDelete(() => list)
+        createDelete()
+    }
+
     const createStay = () => {
         if (detStay.length > 0) {
             setPlantStay(
                 detStay.map((item, key) => {
                     return (
                         <Row key={key} style={{ marginTop: "15px" }}>
-                            <Col md="7">
+                            <Col md="4">
                                 <Input value={item.nombre_prod} disabled />
                             </Col>
                             <Col md="3">
-                                <Input style={{ textAlign: "right" }} value={"$ " + formatMoney(item.total_prod)} disabled />
+                                <Input style={{ textAlign: "right" }} value={"$ " + formatMoney(item.precio_ind * item.cant_prod)} disabled />
+                            </Col>
+                            <Col md="3">
+                                <Input style={{ textAlign: "right" }} value={item.cant_prod} onChange={e => { changeStayCant(key, item, e.target.value) }} />
                             </Col>
                             <Col md="2">
                                 <Button
@@ -104,17 +126,21 @@ const ModalDevPart = ({
             let totDel = 0
             setPlantDelete(
                 detDelete.map((item, key) => {
-                    totDel = totDel + item.total_prod
+                    totDel = totDel + item.precio_ind * item.cant_prod
+
                     if (key === detDelete.length - 1) {
                         setTotalDelete(totDel)
                     }
                     return (
                         <Row key={key} style={{ marginTop: "15px" }}>
-                            <Col md="7">
+                            <Col md="4">
                                 <Input value={item.nombre_prod} disabled />
                             </Col>
                             <Col md="3">
-                                <Input style={{ textAlign: "right" }} value={"$ " + formatMoney(item.total_prod)} disabled />
+                                <Input style={{ textAlign: "right" }} value={"$ " + formatMoney(item.precio_ind * item.cant_prod)} disabled />
+                            </Col>
+                            <Col md="3">
+                                <Input style={{ textAlign: "right" }} value={item.cant_prod} onChange={e => { changeDeleteCant(key, item, e.target.value) }} />
                             </Col>
                             <Col md="2">
                                 <Button
@@ -204,7 +230,6 @@ const ModalDevPart = ({
                             </Col>
                         </Row>
                 }
-
             </ModalBody>
             <ModalFooter>
                 <Button color="primary" onClick={e => {
