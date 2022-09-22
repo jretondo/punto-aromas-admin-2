@@ -87,7 +87,8 @@ const Ventas = ({
                     cliente_email: emailCliente,
                     lista_prod: productsSellList,
                     descuentoPerc: descuentoPerc,
-                    variosPagos: variosPagos
+                    variosPagos: variosPagos,
+                    costoEnvio: costoEnvio
                 },
                 fiscal: factFiscBool
             }
@@ -107,7 +108,8 @@ const Ventas = ({
                     cliente_name: razSoc,
                     lista_prod: productsSellList,
                     descuentoPerc: descuentoPerc,
-                    variosPagos: variosPagos
+                    variosPagos: variosPagos,
+                    costoEnvio: costoEnvio
                 },
                 fiscal: factFiscBool
             }
