@@ -32,6 +32,8 @@ const FilaVentas = ({
     const [modal1, setModal1] = useState(false)
     const [modal2, setModal2] = useState(false)
 
+    const isAdmin = parseInt(localStorage.getItem("user-admin"))
+
     const getFact = async (idFact, send, type) => {
         console.log('type :>> ', type);
         let query = ""
@@ -224,7 +226,7 @@ const FilaVentas = ({
                                         e.preventDefault(e)
                                         setModal2(true)
                                     }}
-                                    disabled={(parseFloat(item.total_fact) < 0 || parseInt(item.t_fact) < 0) ? true : false}
+                                    disabled={(parseFloat(item.total_fact) < 0 || parseInt(item.t_fact) < 0 || isAdmin === 0) ? true : false}
                                 >
                                     <MdOutlineFreeCancellation />
                                     Devolución Parcial
@@ -245,7 +247,7 @@ const FilaVentas = ({
                                         e.preventDefault(e)
                                         anularFact(item.id)
                                     }}
-                                    disabled={(parseFloat(item.total_fact) < 0 || parseInt(item.t_fact) < 0) ? true : false}
+                                    disabled={(parseFloat(item.total_fact) < 0 || parseInt(item.t_fact) < 0 || isAdmin === 0) ? true : false}
                                 >
                                     <BsFillXCircleFill />
                                     Cancelar Factura

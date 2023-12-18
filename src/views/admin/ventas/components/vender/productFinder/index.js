@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import {
     Button,
     Col,
+    Form,
     FormGroup,
     Input,
     InputGroup,
@@ -13,10 +14,10 @@ import useSound from 'use-sound';
 import beepSfx from '../../../../../../assets/sounds/beep.mp3';
 import Scanner from "components/scanner";
 import productsSellContext from '../../../../../../context/productsSell';
-import Form from 'reactstrap/lib/Form';
 import isMobile from 'is-mobile';
 import ModalSearch from './modalSearch';
 import ModalPricesCant from './modalPricesCant';
+import ButtonOpenCollapse from 'components/buttonOpen';
 
 const ProductFinder = ({ clienteData, clienteBool }) => {
     const [result, setResult] = useState(null);
@@ -25,6 +26,7 @@ const ProductFinder = ({ clienteData, clienteBool }) => {
     const [camera, setCamera] = useState(false);
     const [prodSearchModal, setProdSearchModal] = useState(false)
     const [modalPrices, setModalPrices] = useState(false)
+    const [searchType, setSearchType] = useState(0)
 
     const { NewProdSell, productsSellList, error } = useContext(productsSellContext)
 
@@ -77,6 +79,7 @@ const ProductFinder = ({ clienteData, clienteBool }) => {
                 e.preventDefault()
                 findProd(prodText)
             }}>
+
                 <Row>
                     <Col md="3">
                         <Label for="cantTxt">Cant.</Label>
@@ -87,6 +90,29 @@ const ProductFinder = ({ clienteData, clienteBool }) => {
                     <Col md="9" >
                         <Label for="prodTxtFinder">Producto</Label>
                         <InputGroup>
+                            {/*
+                            <InputGroupAddon addonType="prepend">
+                            <ButtonOpenCollapse
+                                action={() => setSearchType(0)}
+                                tittle={"Nombre"}
+                                active={searchType === 0 ? true : false}
+                                thin={true}
+                            />
+                            <ButtonOpenCollapse
+                                action={() => setSearchType(1)}
+                                tittle={"Código"}
+                                active={searchType === 1 ? true : false}
+                                thin={true}
+                            />
+                            <ButtonOpenCollapse
+                                action={() => setSearchType(2)}
+                                tittle={"Marca"}
+                                active={searchType === 2 ? true : false}
+                                thin={true}
+                            />
+                        </InputGroupAddon>
+                            */
+                            }
                             <Input
                                 type="text"
                                 id="prodTxtFinder"
@@ -102,7 +128,6 @@ const ProductFinder = ({ clienteData, clienteBool }) => {
                                             setCamera(true);
                                         }}><i className="fas fa-camera"></i></Button> : null
                                 }
-
                                 <Button className="btn btn-info" onClick={prodSearchToggle} >
                                     <i className="fas fa-search" ></i>
                                 </Button>
@@ -113,16 +138,17 @@ const ProductFinder = ({ clienteData, clienteBool }) => {
                         </ InputGroup>
                     </Col>
                 </Row>
-                <Row>
-                    <Col style={camera ? { border: "2px solid red" } : { display: "none" }} >
-                        <button className="btn btn-danger" style={{ position: "absolute", top: 0, right: 0, zIndex: 100 }} onClick={(e) => {
-                            e.preventDefault();
-                            setCamera(false);
-                        }} >X</button>
-                        {camera && <Scanner onDetected={onDetected} />}
-                    </Col>
-                </Row>
             </Form>
+
+            <Row>
+                <Col style={camera ? { border: "2px solid red" } : { display: "none" }} >
+                    <button className="btn btn-danger" style={{ position: "absolute", top: 0, right: 0, zIndex: 100 }} onClick={(e) => {
+                        e.preventDefault();
+                        setCamera(false);
+                    }} >X</button>
+                    {camera && <Scanner onDetected={onDetected} />}
+                </Col>
+            </Row>
             <ModalSearch
                 prodSearchModal={prodSearchModal}
                 prodSearchToggle={prodSearchToggle}
@@ -138,6 +164,7 @@ const ProductFinder = ({ clienteData, clienteBool }) => {
                 setCantProd={setCantProd}
                 clienteData={clienteData}
                 clienteBool={clienteBool}
+                searchType={searchType}
             />
         </>
     )

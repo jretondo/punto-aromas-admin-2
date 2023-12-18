@@ -10,8 +10,6 @@ const FilaPrecio = ({
 }) => {
 
     const quitar = () => {
-        setPreciosDisp(() => [...preciosDisp, { type: item.type_price_name, order: item.order }])
-        setPreciosDisp((prices) => prices.sort((a, b) => a.order - b.order))
         setListaPrecios(listaPrecios => {
             listaPrecios.splice(id, 1)
             return [...listaPrecios]

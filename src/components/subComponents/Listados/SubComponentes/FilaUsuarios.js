@@ -1,13 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import axios from 'axios'
 import UrlNodeServer from '../../../../api/NodeServer'
 import {
     DropdownMenu,
     DropdownItem,
     UncontrolledDropdown,
-    DropdownToggle
+    DropdownToggle,
+    Button
 } from "reactstrap"
 import swal from 'sweetalert'
+import ModalClientesVendedores from './ModalClientesVendedores'
 
 const FilaUsuario = ({
     id,
@@ -35,6 +37,9 @@ const FilaUsuario = ({
     setIdCtaCte,
     setNombreCtaCte,
 }) => {
+
+    const [isOpenModal1, setIsOpenModal1] = useState(false)
+    const toggle1 = () => setIsOpenModal1(!isOpenModal1)
 
     const EliminarOff = async (e, id, name, primero, pagina) => {
         e.preventDefault()
@@ -112,61 +117,77 @@ const FilaUsuario = ({
     }
 
     return (
-        <tr key={id}>
-            <td style={{ textAlign: "center" }}>
-                {item.nombre + " " + item.apellido}
-            </td>
-            <td style={{ textAlign: "center" }}>
-                {item.usuario}
-            </td>
-            <td style={{ textAlign: "center" }}>
-                {item.email}
-            </td>
-            <td className="text-right">
-                <UncontrolledDropdown>
-                    <DropdownToggle
-                        className="btn-icon-only text-light"
-                        href="#pablo"
-                        role="button"
-                        size="sm"
-                        color=""
-                        onClick={e => e.preventDefault()}
-                    >
-                        <i className="fas fa-ellipsis-v" />
-                    </DropdownToggle>
-                    <DropdownMenu className="dropdown-menu-arrow" right>
-                        <DropdownItem
+        <>
+            <tr key={id}>
+                <td style={{ textAlign: "center" }}>
+                    {item.nombre + " " + item.apellido}
+                </td>
+                <td style={{ textAlign: "center" }}>
+                    {item.usuario}
+                </td>
+                <td style={{ textAlign: "center" }}>
+                    {item.email}
+                </td>
+                <td style={{ textAlign: "center" }}>
+                    <Button color="primary" onClick={e => {
+                        e.preventDefault()
+                        toggle1()
+                    }}>
+                        Ver
+                    </Button>
+                </td>
+                <td className="text-right">
+                    <UncontrolledDropdown>
+                        <DropdownToggle
+                            className="btn-icon-only text-light"
                             href="#pablo"
-                            onClick={e => VerDetalles(e, item.id)}
+                            role="button"
+                            size="sm"
+                            color=""
+                            onClick={e => e.preventDefault()}
                         >
-                            <i className="fas fa-edit"></i>
-                            Editar
-                        </DropdownItem>
-                        <DropdownItem
-                            href="#pablo"
-                            onClick={e => VerCtaCte(e, item.id, item.nombre + " " + item.apellido)}
-                        >
-                            <i className="fas fa-list"></i>
-                            Ver Cuenta Corriente
-                        </DropdownItem>
-                        <DropdownItem
-                            href="#pablo"
-                            onClick={e => DarPermisos(e, item.id, item.nombre + " " + item.apellido)}
-                        >
-                            <i className="fas fa-id-card"></i>
-                            Dar Permisos
-                        </DropdownItem>
-                        <DropdownItem
-                            href="#pablo"
-                            onClick={e => EliminarOff(e, item.id, item.nombre + " " + item.apellido, primero, pagina)}
-                        >
-                            <i className="fas fa-trash-alt"></i>
-                            Eliminar
-                        </DropdownItem>
-                    </DropdownMenu>
-                </UncontrolledDropdown>
-            </td>
-        </tr>
+                            <i className="fas fa-ellipsis-v" />
+                        </DropdownToggle>
+                        <DropdownMenu className="dropdown-menu-arrow" right>
+                            <DropdownItem
+                                href="#pablo"
+                                onClick={e => VerDetalles(e, item.id)}
+                            >
+                                <i className="fas fa-edit"></i>
+                                Editar
+                            </DropdownItem>
+                            <DropdownItem
+                                href="#pablo"
+                                onClick={e => VerCtaCte(e, item.id, item.nombre + " " + item.apellido)}
+                            >
+                                <i className="fas fa-list"></i>
+                                Ver Cuenta Corriente
+                            </DropdownItem>
+                            <DropdownItem
+                                href="#pablo"
+                                onClick={e => DarPermisos(e, item.id, item.nombre + " " + item.apellido)}
+                            >
+                                <i className="fas fa-id-card"></i>
+                                Dar Permisos
+                            </DropdownItem>
+                            <DropdownItem
+                                href="#pablo"
+                                onClick={e => EliminarOff(e, item.id, item.nombre + " " + item.apellido, primero, pagina)}
+                            >
+                                <i className="fas fa-trash-alt"></i>
+                                Eliminar
+                            </DropdownItem>
+                        </DropdownMenu>
+                    </UncontrolledDropdown>
+                </td>
+            </tr>
+            <ModalClientesVendedores
+                toggle={toggle1}
+                isOpen={isOpenModal1}
+                vendedorName={item.nombre + " " + item.apellido}
+                userId={item.id}
+            />
+        </>
     )
 }
 

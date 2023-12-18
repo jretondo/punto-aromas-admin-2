@@ -50,6 +50,7 @@ const ProdList = ({
     const [porc, setPorc] = useState("")
     const [round, setRound] = useState(0)
     const [roundBool, setRoundBool] = useState(false)
+    const [providerBool, setProviderBool] = useState(false)
 
     useEffect(() => {
         ListarProductos()
@@ -84,6 +85,10 @@ const ProdList = ({
             data = {
                 query: palabraBuscada
             }
+        }
+
+        if (providerBool) {
+            data.provider = providerBool
         }
         await axios.get(`${UrlNodeServer.productsDir.products}/${pagina}`, {
             params: data,
@@ -182,6 +187,9 @@ const ProdList = ({
                 query: palabraBuscada
             }
         }
+        if (providerBool) {
+            query.provider = providerBool
+        }
         const data = {
             aumento: aumento,
             porc: (porc / 100),
@@ -232,6 +240,10 @@ const ProdList = ({
                 query: palabraBuscada
             }
         }
+
+        if (providerBool) {
+            data.provider = providerBool
+        }
         await axios.get(UrlNodeServer.productsDir.sub.prodListPDF, {
             responseType: 'arraybuffer',
             params: data,
@@ -275,6 +287,10 @@ const ProdList = ({
                                         <h2 className="mb-0" style={{ textAlign: "center" }} >Lista de Productos</h2>
                                     </Col>
                                     <Col md="8" style={{ textAlign: "right" }}>
+                                        <Input style={{ width: "200px", marginLeft: "auto" }} type="select" value={providerBool} onChange={e => setProviderBool(e.target.value)}>
+                                            <option value={false}>Buscar Productos</option>
+                                            <option value={true}>Buscar por Proveedor</option>
+                                        </Input>
                                         <BusquedaProdForm
                                             setPage={setPagina}
                                             busquedaBool={busquedaBool}

@@ -15,7 +15,8 @@ const ModalPricesCant = ({
     clienteData,
     setCantProd,
     setProdText,
-    clienteBool
+    clienteBool,
+    searchType
 }) => {
     const [listPrices, setListPrices] = useState(<tr><td>No hay precios asociados</td></tr>)
     const { NewProdSell } = useContext(productsSellContext)
@@ -30,7 +31,7 @@ const ModalPricesCant = ({
     }, [NewProdSell, toggle])
 
     const FindProd = async () => {
-        await axios.get(UrlNodeServer.productsDir.products + `/1?query=${text}&cantPerPage=1&forSell=1`, {
+        await axios.get(UrlNodeServer.productsDir.products + `/1?query=${text}&cantPerPage=1&forSell=1?type=${searchType}`, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('user-token')
             }
@@ -38,64 +39,76 @@ const ModalPricesCant = ({
             .then(async res => {
                 const respuesta = res.data
                 const status = respuesta.status
-                if (status === 200) {
-                    const data = respuesta.body.data[0]
-                    let pricesData = []
-                    if (parseFloat(data.minorista) > 0) {
-                        pricesData.push({
-                            type_price_name: "minorista",
-                            sell_price: data.minorista
-                        })
-                    }
-                    if (parseFloat(data.mayorista_1) > 0) {
-                        pricesData.push({
-                            type_price_name: "mayorista_1",
-                            sell_price: data.mayorista_1
-                        })
-                    }
-                    if (parseFloat(data.mayorista_2) > 0) {
-                        pricesData.push({
-                            type_price_name: "mayorista_2",
-                            sell_price: data.mayorista_2
-                        })
-                    }
-                    if (parseFloat(data.mayorista_3) > 0) {
-                        pricesData.push({
-                            type_price_name: "mayorista_3",
-                            sell_price: data.mayorista_3
-                        })
-                    }
-                    if (parseFloat(data.revendedor) > 0) {
-                        pricesData.push({
-                            type_price_name: "revendedor",
-                            sell_price: data.revendedor
-                        })
-                    }
-                    if (parseFloat(data.supermercado) > 0) {
-                        pricesData.push({
-                            type_price_name: "supermercado",
-                            sell_price: data.supermercado
-                        })
-                    }
+                if (status === 200 && respuesta.body.data.length > 0) {
+                    const stock = respuesta.body.stock
+                    if ((stock - cantProd) >= 0) {
+                        const data = respuesta.body.data[0]
+                        let pricesData = []
+                        if (parseFloat(data.minorista) > 0) {
+                            pricesData.push({
+                                type_price_name: "minorista",
+                                sell_price: data.minorista
+                            })
+                        }
+                        if (parseFloat(data.mayorista_1) > 0) {
+                            pricesData.push({
+                                type_price_name: "mayorista_1",
+                                sell_price: data.mayorista_1
+                            })
+                        }
+                        if (parseFloat(data.mayorista_2) > 0) {
+                            pricesData.push({
+                                type_price_name: "mayorista_2",
+                                sell_price: data.mayorista_2
+                            })
+                        }
+                        if (parseFloat(data.mayorista_3) > 0) {
+                            pricesData.push({
+                                type_price_name: "mayorista_3",
+                                sell_price: data.mayorista_3
+                            })
+                        }
+                        if (parseFloat(data.revendedor) > 0) {
+                            pricesData.push({
+                                type_price_name: "revendedor",
+                                sell_price: data.revendedor
+                            })
+                        }
+                        if (parseFloat(data.supermercado) > 0) {
+                            pricesData.push({
+                                type_price_name: "supermercado",
+                                sell_price: data.supermercado
+                            })
+                        }
 
-                    if (pricesData.length === 0) {
-                        swal("Error con los precios", "Este producto no tiene precios asociados! Controlelo.", "error")
-                    } else if (pricesData.length === 1) {
-                        addProduct(data, cant, pricesData, 0)
-                    } else {
-                        if (clienteData.price_default && parseInt(clienteBool) === 1) {
-                            const price = pricesData.filter(item => item.type_price_name === clienteData.price_default)
+                        if (pricesData.length === 0) {
+                            swal("Error con los precios", "Este producto no tiene precios asociados! Controlelo.", "error")
+                        } else if (pricesData.length === 1) {
+                            addProduct(data, cant, pricesData, 0)
+                        } else {
+                            if (clienteData.price_default && parseInt(clienteBool) === 1) {
+                                const price = pricesData.filter(item => item.type_price_name === clienteData.price_default)
 
 
-                            if (price.length > 0) {
-                                const precioRevende = data.revendedor
-                                if (parseFloat(precioRevende) === 0) {
-                                    swal("Producto sin comisión!", "Este producto no posee precio de reventa! Lo que no dejará ninguna comisión!", "info")
+                                if (price.length > 0) {
+                                    const precioRevende = data.revendedor
+                                    if (parseFloat(precioRevende) === 0) {
+                                        swal("Producto sin comisión!", "Este producto no posee precio de reventa! Lo que no dejará ninguna comisión!", "info")
+                                    }
+                                    setDataProd(data)
+                                    setPrices(pricesData)
+                                    setRevProd(precioRevende)
+                                    addProduct(data, cant, price[0], data.revendedor)
+                                } else {
+                                    const precioRevende = data.revendedor
+                                    if (parseFloat(precioRevende) === 0) {
+                                        swal("Producto sin comisión!", "Este producto no posee precio de reventa! Lo que no dejará ninguna comisión!", "info")
+                                    }
+                                    setDataProd(data)
+                                    setPrices(pricesData)
+                                    setRevProd(precioRevende)
+                                    addProduct(data, cant, pricesData[0], data.revendedor)
                                 }
-                                setDataProd(data)
-                                setPrices(pricesData)
-                                setRevProd(precioRevende)
-                                addProduct(data, cant, price[0], data.revendedor)
                             } else {
                                 const precioRevende = data.revendedor
                                 if (parseFloat(precioRevende) === 0) {
@@ -104,28 +117,22 @@ const ModalPricesCant = ({
                                 setDataProd(data)
                                 setPrices(pricesData)
                                 setRevProd(precioRevende)
-                                addProduct(data, cant, pricesData[0], data.revendedor)
-                            }
-                        } else {
-                            const precioRevende = data.revendedor
-                            if (parseFloat(precioRevende) === 0) {
-                                swal("Producto sin comisión!", "Este producto no posee precio de reventa! Lo que no dejará ninguna comisión!", "info")
-                            }
-                            setDataProd(data)
-                            setPrices(pricesData)
-                            setRevProd(precioRevende)
-                            const price = pricesData.filter(item => item.type_price_name === "mayorista_1")
-                            if (price.length > 0) {
-                                addProduct(data, cant, price[0], data.revendedor)
+                                const price = pricesData.filter(item => item.type_price_name === "mayorista_1")
+                                if (price.length > 0) {
+                                    addProduct(data, cant, price[0], data.revendedor)
+                                }
                             }
                         }
+                    } else {
+                        swal("Stock", "No hay stock suficiente!", "error");
+                        toggle()
                     }
                 } else {
                     swal("Error!", "Hubo un error. Controle que haya colocado un número válido!", "error");
                 }
             }).catch((err) => {
-                swal("Error!", "Hubo un error: " + err.message, "error");
-            }).finally(() => setProdText(""))
+                swal("Error!", "Hubo un error: No hay productos filtrado" + err.message, "error");
+            }).finally(() => { toggle() })
     }
 
     useEffect(() => {

@@ -54,7 +54,7 @@ const Ventas = ({
 
     const [modal1, setModal1] = useState(false)
 
-    const { totalPrecio, cancelarCompra, productsSellList } = useContext(productsSellContext)
+    const { totalPrecio, cancelarCompra, productsSellList, setProductsSellList } = useContext(productsSellContext)
 
     const cancelar = () => {
         swal({
@@ -149,6 +149,48 @@ const Ventas = ({
     }
 
     const facturar = async (data) => {
+        productsSellList.sort((a, b) => {
+            return (a.id_prod - b.id_prod)
+        })
+        let idAnt = -1
+        let priceAnt = -1
+        let newList = []
+        productsSellList.map((item) => {
+            if (item.id_prod !== idAnt || item.price !== priceAnt) {
+                newList.push(item)
+            } else {
+                newList[(newList.length - 1)].cant_prod = newList[(newList.length - 1)].cant_prod + item.cant_prod
+            }
+            idAnt = item.id_prod
+            priceAnt = item.price
+        })
+
+
+        newList.map(async (item, key) => {
+            let cargar = true
+            await axios.get(UrlNodeServer.stockDir.sub.totalStock + "?id_prod=" + item.id_prod, {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('user-token')
+                }
+            }).then(res => {
+                const stock = res.data.body
+                if ((stock - item.cant_prod) < 0) {
+                    swal("Error en stock!", `La cantidad de ${item.name} (${item.subcategory}) que colocó es de ${item.cant_prod} y el stock es de ${stock}`, "error");
+                    throw Error("Error en stock")
+                }
+            }).catch(async (err) => {
+                cargar = false
+            }).finally(() => { })
+
+            if (newList.length - 1 === key) {
+                if (cargar) {
+                    createPDF(data)
+                }
+            }
+        })
+    }
+
+    const createPDF = async (data) => {
         setProcessing(true)
         await axios.post(UrlNodeServer.invoicesDir.invoices, data, {
             responseType: 'arraybuffer',
@@ -156,7 +198,7 @@ const Ventas = ({
                 'Authorization': 'Bearer ' + localStorage.getItem('user-token'),
                 Accept: 'application/pdf',
             },
-            timeout: 5000
+            timeout: 15000
         }).then(res => {
             if (parseInt(formaPago) === 0) {
                 setModal1(true)

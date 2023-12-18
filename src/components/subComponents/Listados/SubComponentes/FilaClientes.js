@@ -34,7 +34,8 @@ const FilaProducto = ({
     setNombreCtaCte,
     toggleSellerAsign,
     setClienteSelect,
-    deuda
+    deuda,
+    isAdmin
 }) => {
 
     const EliminarOff = async (e, id, name, primero, pagina) => {
@@ -157,13 +158,15 @@ const FilaProducto = ({
                             <i className="fas fa-search"></i>
                             Ver detalles
                         </DropdownItem>
-                        <DropdownItem
-                            href="#pablo"
-                            onClick={e => designSeller(e, item)}
-                        >
-                            <i className="fas fa-user"></i>
-                            Asignar vendedor
-                        </DropdownItem>
+                        {
+                            parseInt(isAdmin) === 1 && <DropdownItem
+                                href="#pablo"
+                                onClick={e => designSeller(e, item)}
+                            >
+                                <i className="fas fa-user"></i>
+                                Asignar vendedor
+                            </DropdownItem>
+                        }
                         <DropdownItem
                             href="#pablo"
                             onClick={e => VerCtaCte(e, item.ndoc, item.razsoc)}

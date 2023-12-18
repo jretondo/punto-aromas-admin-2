@@ -22,6 +22,9 @@ import ListaClientesMod from './lista'
 import CtaCteListClientMod from './ctacte'
 
 const ClientesView = () => {
+    const isAdmin = localStorage.getItem("user-admin")
+    console.log('isAdmin :>> ', isAdmin);
+
     //user massages
     const [alertar, setAlertar] = useState(false)
     const [msgStrongAlert, setMsgStrong] = useState("")
@@ -99,6 +102,7 @@ const ClientesView = () => {
                                 nvaActCall={nvaActCall}
                                 alertar={alertar}
                                 setNombreCtaCte={setNombreCtaCte}
+                                isAdmin={isAdmin}
                             />
                     }
                 </Container>

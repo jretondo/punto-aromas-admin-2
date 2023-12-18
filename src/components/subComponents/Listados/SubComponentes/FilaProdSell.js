@@ -15,7 +15,7 @@ const FilaProdSell = ({
         <>
             <tr key={id}>
                 <td style={{ textAlign: "center" }}>
-                    {item.name}
+                    {item.name} ({item.subcategory})
                 </td>
                 <td style={{ textAlign: "center" }}>
                     {item.cant_prod}

@@ -5,8 +5,8 @@ let publicFiles = ""
 const local = 1
 if (process.env.NODE_ENV === "development") {
     if (local === 1) {
-        host = "http://192.168.0.11:3002/api"
-        publicFiles = "http://192.168.0.11:3002/static/"
+        host = "http://localhost:3002/api"
+        publicFiles = "http://localhost:3002/static/"
     } else {
         host = "https://api-test.nekoadmin.com.ar/punto-aroma/api"
         publicFiles = "https://api-test.nekoadmin.com.ar/punto-aroma/static/"
@@ -17,9 +17,11 @@ if (process.env.NODE_ENV === "development") {
 }
 
 const prodImages = publicFiles + "/images/products/"
+const heroImages = publicFiles + "/images/heroSlider/"
 
 const publicFolder = {
-    prodImages
+    prodImages,
+    heroImages
 }
 
 
@@ -36,6 +38,7 @@ const transportistas = host + "/transportistas"
 const usuarios = host + "/user"
 const stock = host + "/stock"
 const invoices = host + "/invoices"
+const heroSlider = host + "/heroSlider"
 
 const productsDir = {
     products,
@@ -52,7 +55,8 @@ const productsDir = {
         prices: products + "/prices",
         var: products + "/var",
         images: products + "/images",
-        prodListPDF: products + "/prodListPDF"
+        prodListPDF: products + "/prodListPDF",
+        getTags: products + "/getTags"
     }
 }
 const authDir = {
@@ -66,7 +70,8 @@ const stockDir = {
         moverStock: stock + "/moverStock",
         ultStockList: stock + "/ultStockList",
         listaStock: stock + "/listaStock",
-        stockProd: stock + "/stockProd"
+        stockProd: stock + "/stockProd",
+        totalStock: stock + "/totalStock"
     }
 }
 
@@ -78,7 +83,8 @@ const usuariosDir = {
         sellers: usuarios + "/sellers",
         ctaCte: usuarios + "/ctaCte",
         payments: usuarios + "/payments",
-        factDet: usuarios + "/factDet"
+        factDet: usuarios + "/factDet",
+        clients: usuarios + "/clients"
     }
 }
 
@@ -167,6 +173,14 @@ const routesDir = {
     }
 }
 
+const heroSliderDir = {
+    heroSlider,
+    sub: {
+        details: heroSlider + "/details",
+        enabled: heroSlider + "/enabled",
+    }
+
+}
 
 const UrlNodeServer = {
     publicFolder,
@@ -181,7 +195,8 @@ const UrlNodeServer = {
     transportistasDir,
     usuariosDir,
     stockDir,
-    invoicesDir
+    invoicesDir,
+    heroSliderDir
 }
 
 export default UrlNodeServer

@@ -134,6 +134,8 @@ const ModalCobroCtaCte = ({
                                                 <option value={1}>Mercado Pago</option>
                                                 <option value={2}>Débito</option>
                                                 <option value={3}>Crédito</option>
+                                                <option value={6}>Cheque</option>
+                                                <option value={7}>Transferencia</option>
                                             </Input>
                                         </FormGroup>
                                     </Col>

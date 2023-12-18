@@ -7,7 +7,7 @@ import FilaUsuario from 'components/subComponents/Listados/SubComponentes/FilaUs
 import BusquedaProdForm from 'components/subComponents/Productos/BusquedaForm'
 import Paginacion from 'components/subComponents/Paginacion/Paginacion'
 
-const titulos = ["Nombre", "Usuario", "Email", ""]
+const titulos = ["Nombre", "Usuario", "Email", "Clientes", ""]
 
 const UserList = ({
     alertar,

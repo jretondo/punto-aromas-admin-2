@@ -68,12 +68,12 @@ const PreciosProducto = ({
     }
 
     const disponibles = () => {
-        let disponibles = preciosDisp
+        let disponible = preciosList
         // eslint-disable-next-line
         listaPrecios.map((item, key) => {
-            disponibles = disponibles.filter(item2 => item2.type !== item.type_price_name)
+            disponible = disponible.filter(item2 => item2.order !== item.order)
             if (key === listaPrecios.length - 1) {
-                setPreciosDisp(() => disponibles)
+                setPreciosDisp(() => disponible)
             }
         })
     }

@@ -37,6 +37,7 @@ const ListaClientesMod = ({
     setCall,
     nvaActCall,
     alertar,
+    isAdmin
 }) => {
     const [detallesBool, setDetallesBool] = useState(false)
     const [nvoProveedor, setNvoProveedor] = useState(false)
@@ -214,6 +215,7 @@ const ListaClientesMod = ({
                                         toggleSellerAsign={() => setModalSellers(true)}
                                         modal={modalSellers}
                                         deuda={deudaClientes}
+                                        isAdmin={isAdmin}
                                     />
                                 )
                             })
@@ -564,9 +566,13 @@ const ListaClientesMod = ({
                                                         <Label>
                                                             Vendedores
                                                         </Label>
-                                                        <Input value={vendedorId} onChange={e => setVendedorId(e.target.value)} type="select" >
-                                                            {listaVendedores}
-                                                        </Input>
+                                                        {
+                                                            parseInt(isAdmin) === 1 ?
+                                                                <Input value={vendedorId} onChange={e => setVendedorId(e.target.value)} type="select" >
+                                                                    {listaVendedores}
+                                                                </Input> : <Input type="text" value="Usted no tiene los permisos para cambiar este campo." disabled />
+                                                        }
+
                                                     </FormGroup>
                                                 </Col>
                                                 <Col>
