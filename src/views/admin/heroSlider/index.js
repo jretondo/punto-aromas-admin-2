@@ -41,11 +41,20 @@ const HeroSlider = () => {
                                             setIsLoading={setIsLoading}
                                             setIsOpenForm={setIsOpenForm}
                                             HeroSliderData={HeroSliderData}
+                                            setAlertar={setAlertar}
+                                            setMsgStrong={setMsgStrong}
+                                            setMsgGralAlert={setMsgGralAlert}
+                                            setSuccessAlert={setSuccessAlert}
+
                                         /> :
                                         <ListHeroSlider
                                             setIsOpenForm={setIsOpenForm}
                                             setIsLoading={setIsLoading}
                                             setHeroSliderData={setHeroSliderData}
+                                            setAlertar={setAlertar}
+                                            setMsgStrong={setMsgStrong}
+                                            setMsgGralAlert={setMsgGralAlert}
+                                            setSuccessAlert={setSuccessAlert}
                                         />}
                                 </CardHeader>
                             </Card>

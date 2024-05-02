@@ -52,6 +52,7 @@ const ModalPago = ({
                                             <option value={2}>Débito</option>
                                             <option value={3}>Crédito</option>
                                             <option value={6}>Cheque</option>
+                                            <option value={7}>Transferencia</option>
                                             {
                                                 parseInt(clienteBool) === 1 ?
                                                     <option value={4}>Cuenta Corriente</option> :

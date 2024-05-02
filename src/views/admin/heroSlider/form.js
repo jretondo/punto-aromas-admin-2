@@ -5,39 +5,26 @@ import 'react-quill/dist/quill.snow.css';
 import axios from 'axios';
 import UrlNodeServer from '../../../api/NodeServer';
 import InputSearch from '../../../components/customInputs/InputSearch';
+import swal from 'sweetalert';
 
 const FormHeroSlider = ({
     setIsOpenForm,
-    setIsLoading
+    setIsLoading,
+    HeroSliderData,
+    setHeroSliderData,
+    setAlertar,
+    setMsgStrong,
+    setMsgGralAlert,
+    setSuccessAlert
 }) => {
-    const [title, setTitle] = useState("")
-    const [subtitle, setSubtitle] = useState("")
-    const [tag, setTag] = useState("")
+    const [title, setTitle] = useState(HeroSliderData?.title ? HeroSliderData.title : "")
+    const [subtitle, setSubtitle] = useState(HeroSliderData?.subtitle ? HeroSliderData.subtitle : "")
     const [subcategory, setSubcategory] = useState("")
-    const [type, setType] = useState(0)
-    const [tagList, setTagList] = useState([])
+    const [type, setType] = useState(HeroSliderData ? HeroSliderData.type : 0)
     const [subcategoryList, setSubcategoryList] = useState([])
     const [imgUrl, setImgUrl] = useState()
-
-    const getTags = async () => {
-        await axios.get(UrlNodeServer.productsDir.sub.getTags, {
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('user-token')
-            }
-        }).then(res => {
-            const respuesta = res.data
-            const status = respuesta.status
-            if (status === 200) {
-                const data = respuesta.body
-                setTagList(data)
-            } else {
-
-            }
-        }).catch((error) => {
-            setTagList([])
-        }).finally(() => {
-        })
-    }
+    const [product, setProduct] = useState("")
+    const [productList, setProductList] = useState([])
 
     const getSubcategories = async () => {
         await axios.get(UrlNodeServer.productsDir.sub.marcas, {
@@ -51,7 +38,10 @@ const FormHeroSlider = ({
                 const data = respuesta.body
                 setSubcategoryList(data)
             } else {
-
+                setAlertar(true)
+                setMsgStrong("Error!")
+                setMsgGralAlert("No se pudo obtener la lista de marcas")
+                setSuccessAlert(false)
             }
         }).catch((error) => {
             setSubcategoryList([])
@@ -59,10 +49,27 @@ const FormHeroSlider = ({
         })
     }
 
-    const tagSearchFn = (tag, searchedText) => {
-        if ((tag.tag).toLowerCase().includes(searchedText.toLowerCase())) {
-            return tag
-        }
+    const getProducts = async () => {
+        await axios.get(UrlNodeServer.productsDir.products, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('user-token')
+            }
+        }).then(res => {
+            const respuesta = res.data
+            const status = respuesta.status
+            if (status === 200) {
+                const data = respuesta.body
+                setProductList(data)
+            } else {
+                setAlertar(true)
+                setMsgStrong("Error!")
+                setMsgGralAlert("No se pudo obtener la lista de productos")
+                setSuccessAlert(false)
+            }
+        }).catch((error) => {
+            setSubcategoryList([])
+        }).finally(() => {
+        })
     }
 
     const categorySearchFn = (category, searchedText) => {
@@ -71,28 +78,58 @@ const FormHeroSlider = ({
         }
     }
 
+    const productSearchFn = (product, searchedText) => {
+        if ((product.name).toLowerCase().includes(searchedText.toLowerCase()) || (product.subcategory).toLowerCase().includes(searchedText.toLowerCase())) {
+            return product
+        }
+    }
+
     const submitForm = async (e) => {
         e.preventDefault()
         setIsLoading(true)
-        fetch(imgUrl)
-            .then(res => res.blob())
-            .then(blob => {
-                const filemini = new File([blob], "ofertaDiaria.jpg", {
-                    type: 'image/jpeg'
-                });
-                //  console.log('head', formData.getHeaders())
-                var formData = new FormData();
-                formData.append("hero", filemini);
+        if (parseInt(type) === 1 && !subcategory) {
+            setIsLoading(false)
+            swal({
+                title: "Error",
+                text: "Debe seleccionar una marca",
+                icon: "error",
+                button: "Aceptar"
+            })
+            return
+        } else if (parseInt(type) === 2 && !product) {
+            setIsLoading(false)
+            swal({
+                title: "Error",
+                text: "Debe seleccionar un producto",
+                icon: "error",
+                button: "Aceptar"
+            })
+            return
+
+        } else {
+            if (HeroSliderData && (imgUrl === UrlNodeServer.publicFolder.heroImages + HeroSliderData.image)) {
+                const formData = new FormData();
+                HeroSliderData.id && formData.append("id", HeroSliderData.id);
                 formData.append("title", title);
                 formData.append("subtitle", subtitle);
-                formData.append("tag", tag);
-                formData.append("subcategory", subcategory);
                 formData.append("type", type);
-                formData.append("url", (parseInt(type) === 0 ? tag.tag : subcategory.category));
-
-                // Example POST method implementation:
+                let urlStr = ""
+                switch (parseInt(type)) {
+                    case 0:
+                        urlStr = ""
+                        break;
+                    case 1:
+                        urlStr = `/catalogo/${subcategory.category}`
+                        break;
+                    case 2:
+                        urlStr = `/product/${product.id_prod}`
+                        break;
+                    default:
+                        break;
+                }
+                formData.append("url", urlStr);
+                console.log('urlStr :>> ', urlStr);
                 async function postData(url = '', data = {}) {
-                    // Default options are marked with *
                     const response = await fetch(url, {
                         method: 'POST',
                         body: data,
@@ -104,31 +141,138 @@ const FormHeroSlider = ({
                 }
 
                 postData(UrlNodeServer.heroSliderDir.heroSlider, formData).then(res => {
-                    const respuesta = res.data
+                    const respuesta = res
                     const status = respuesta.status
-                    console.log('respuesta :>> ', respuesta);
                     if (status === 200) {
-
+                        swal({
+                            title: "Exito",
+                            text: "Oferta subida correctamente",
+                            icon: "success",
+                            button: "Aceptar"
+                        })
                     } else {
-
+                        swal({
+                            title: "Error",
+                            text: "Error al subir la oferta",
+                            icon: "error",
+                            button: "Aceptar"
+                        })
                     }
                 }).catch((error) => {
-                    setTagList([])
+                    console.log('error :>> ', error);
+                    swal({
+                        title: "Error",
+                        text: "Error al subir la oferta",
+                        icon: "error",
+                        button: "Aceptar"
+                    })
                 }).finally(() => {
                     setIsLoading(false)
+                    HeroSliderData && setIsOpenForm(false)
+                    setHeroSliderData(false)
+                    setTitle("")
+                    setSubtitle("")
+                    setSubcategory("")
+                    setType(0)
+                    setImgUrl(false)
                 })
+            } else {
+                fetch(imgUrl)
+                    .then(res => res.blob())
+                    .then(blob => {
+                        const filemini = new File([blob], "ofertaDiaria.jpg", {
+                            type: 'image/jpeg'
+                        });
+                        const formData = new FormData();
+                        HeroSliderData.id && formData.append("id", HeroSliderData.id);
+                        formData.append("hero", filemini);
+                        formData.append("title", title);
+                        formData.append("subtitle", subtitle);
+                        formData.append("type", type);
+                        let urlStr = ""
+                        switch (parseInt(type)) {
+                            case 0:
+                                urlStr = ""
+                                break;
+                            case 1:
+                                urlStr = `/catalogo/${subcategory.category}`
+                                break;
+                            case 2:
+                                urlStr = `/product/${product.id_prod}`
+                                break;
+                            default:
+                                break;
+                        }
+                        formData.append("url", urlStr);
+                        console.log('urlStr :>> ', urlStr);
 
-            })
-
-
+                        async function postData(url = '', data = {}) {
+                            const response = await fetch(url, {
+                                method: 'POST',
+                                body: data,
+                                headers: {
+                                    'Authorization': 'Bearer ' + localStorage.getItem('user-token')
+                                }
+                            });
+                            return response;
+                        }
+                        postData(UrlNodeServer.heroSliderDir.heroSlider, formData).then(res => {
+                            const respuesta = res
+                            const status = respuesta.status
+                            if (status === 200) {
+                                swal({
+                                    title: "Exito",
+                                    text: "Oferta subida correctamente",
+                                    icon: "success",
+                                    button: "Aceptar"
+                                })
+                            } else {
+                                swal({
+                                    title: "Error",
+                                    text: "Error al subir la imagen",
+                                    icon: "error",
+                                    button: "Aceptar"
+                                })
+                            }
+                        }).catch((error) => {
+                            swal({
+                                title: "Error",
+                                text: "Error al subir la oferta",
+                                icon: "error",
+                                button: "Aceptar"
+                            })
+                        }).finally(() => {
+                            setIsLoading(false)
+                            HeroSliderData && setIsOpenForm(false)
+                            setTitle("")
+                            setSubtitle("")
+                            setSubcategory("")
+                            setType(0)
+                            setImgUrl(false)
+                        })
+                    })
+            }
+        }
     }
 
     useEffect(() => {
         getSubcategories()
-        getTags()
+        getProducts()
         // eslint-disable-next-line
     }, [])
 
+
+    useEffect(() => {
+        if (HeroSliderData && HeroSliderData.type === 1) {
+            setSubcategory(subcategoryList.find(subcategory => subcategory.category === HeroSliderData.url))
+        }
+    }, [subcategoryList, HeroSliderData])
+
+    useEffect(() => {
+        if (HeroSliderData) {
+            setImgUrl(UrlNodeServer.publicFolder.heroImages + HeroSliderData.image)
+        }
+    }, [HeroSliderData])
 
     return (
         <>
@@ -177,34 +321,50 @@ const FormHeroSlider = ({
                         <FormGroup>
                             <Label>Tipo de oferta</Label>
                             <Input value={type} onChange={e => setType(e.target.value)} type="select">
-                                <option value={0}>Etiqueta</option>
+                                <option value={0}>Todo el catalogo</option>
                                 <option value={1}>Marca</option>
+                                <option value={2}>Producto</option>
                             </Input>
                         </FormGroup>
                     </Col>
                     <Col md="8">
                         <FormGroup>
-                            {parseInt(type) === 0 && <Label>Etiqueta</Label>}
                             {parseInt(type) === 1 && <Label>Marca</Label>}
-                            <InputSearch
-                                id="order_2"
-                                itemsList={parseInt(type) === 0 ? tagList : subcategoryList}
-                                itemSelected={parseInt(type) === 0 ? tag : subcategory}
-                                title={""}
-                                placeholderInput={"Buscar..."}
-                                getNameFn={parseInt(type) === 0 ? ((tag) => tag.tag) : ((category) => category.category)}
-                                setItemSelected={parseInt(type) === 0 ? setTag : setSubcategory}
-                                searchFn={parseInt(type) === 0 ? tagSearchFn : categorySearchFn}
-                            />
+                            {parseInt(type) === 2 && <Label>Producto</Label>}
+                            {
+                                parseInt(type) === 1 &&
+                                <InputSearch
+                                    id="order_2"
+                                    itemsList={subcategoryList}
+                                    itemSelected={subcategory}
+                                    title={""}
+                                    placeholderInput={"Buscar..."}
+                                    getNameFn={((category) => category.category)}
+                                    setItemSelected={setSubcategory}
+                                    searchFn={categorySearchFn}
+                                />
+                            }
+                            {
+                                parseInt(type) === 2 &&
+                                <InputSearch
+                                    id="order_2"
+                                    itemsList={productList}
+                                    itemSelected={product}
+                                    title={""}
+                                    placeholderInput={"Buscar..."}
+                                    getNameFn={((product) => `${product.name} (${product.subcategory})`)}
+                                    setItemSelected={setProduct}
+                                    searchFn={productSearchFn}
+                                />
+                            }
                         </FormGroup>
                     </Col>
                 </Row>
+                <h6 className="heading-small text-muted mb-4">
+                    Imagen de Fondo
+                </h6>
                 <Row>
-                    <h6 className="heading-small text-muted mb-4">
-                        Imagen de Fondo
-                    </h6>
-                    <div className="pl-lg-4" style={!imgUrl ? { display: "none" } : { display: "block" }}>
-
+                    <div className="col-lg-12" style={!imgUrl ? { display: "none" } : { display: "block" }}>
                         <Row>
                             <Col md="6" style={{ border: "2px solid black" }}>
                                 <Button
@@ -219,7 +379,7 @@ const FormHeroSlider = ({
                                 </Button>
                                 <img
                                     src={imgUrl ? imgUrl : ""}
-                                    style={{ width: "100%" }}
+                                    style={{ width: "80%" }}
                                     alt="nvaImgMod"
                                 />
                             </Col>
@@ -229,11 +389,10 @@ const FormHeroSlider = ({
                                     color="primary"
                                     type="submit"
                                 >
-                                    Subir Oferta
+                                    {HeroSliderData ? "Modificar" : "Subir"}
                                 </Button>
                             </Col>
                         </Row>
-
                     </div>
                     <hr />
 
@@ -244,7 +403,7 @@ const FormHeroSlider = ({
                                 className="form-control-alternative"
                                 id="imgNvaAltmod"
                                 type="file"
-                                accept=".jpg"
+                                accept=".png"
                                 onChange={e => setImgUrl(URL.createObjectURL(e.target.files[0]))}
                             />
                         </FormGroup>

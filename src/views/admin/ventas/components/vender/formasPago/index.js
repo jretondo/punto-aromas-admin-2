@@ -28,6 +28,10 @@ const FormasPagoMod = ({
         let credito = 0
         let ctacteRow = <></>
         let ctacte = 0
+        let cheque = 0
+        let chequeRow = <></>
+        let transf = 0
+        let transfRow = <></>
         let TotalSuma = 0
         if (variosPagos.length > 0) {
             // eslint-disable-next-line
@@ -48,6 +52,12 @@ const FormasPagoMod = ({
                         break;
                     case 4:
                         ctacte = ctacte + parseFloat(item.importe)
+                        break;
+                    case 6:
+                        cheque = cheque + parseFloat(item.importe)
+                        break;
+                    case 7:
+                        transf = transf + parseFloat(item.importe)
                         break;
                     default:
                         break;
@@ -98,12 +108,32 @@ const FormasPagoMod = ({
                             setVariosPagos={setVariosPagos}
                         />
                     }
+                    if (cheque > 0) {
+                        chequeRow = <FilaPago
+                            tipo={6}
+                            tipoTxt="Cheque"
+                            importe={cheque}
+                            variosPagos={variosPagos}
+                            setVariosPagos={setVariosPagos}
+                        />
+                    }
+                    if (transf > 0) {
+                        transfRow = <FilaPago
+                            tipo={7}
+                            tipoTxt="Transferencia"
+                            importe={transf}
+                            variosPagos={variosPagos}
+                            setVariosPagos={setVariosPagos}
+                        />
+                    }
                     setListado(<>
                         {efectivoRow}
                         {mercadoPagoRow}
                         {debitoRow}
                         {creditoRow}
                         {ctacteRow}
+                        {chequeRow}
+                        {transfRow}
                     </>)
                     setTotal(TotalSuma)
                 }

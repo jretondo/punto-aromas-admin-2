@@ -16,6 +16,7 @@
 
 */
 /*eslint-disable*/
+import moment from "moment";
 import React from "react";
 
 // reactstrap components
@@ -30,7 +31,7 @@ class Login extends React.Component {
             <Row className="align-items-center justify-content-xl-between">
               <Col xl="12" style={{ textAlign: "center" }}>
                 <div className="copyright text-center  text-muted">
-                  © 2022{" Club de la Limpieza - Un producto de "}
+                  © {moment(new Date()).format("YYYY")}{" "}{" Punto Aroma - Un producto de "}
                   <a
                     className="font-weight-bold ml-1"
                     href="https://nekonet.com.ar"

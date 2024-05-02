@@ -29,7 +29,7 @@ class Footer extends React.Component {
         <Row className="align-items-center justify-content-xl-between">
           <Col xl="6">
             <div className="copyright text-center text-xl-left text-muted">
-              © {moment(new Date()).format("YYYY")}{" "}
+              © {moment(new Date()).format("YYYY")}{" "}{" Punto Aroma - Un producto de "}
               <a
                 className="font-weight-bold ml-1"
                 href="https://www.nekonet.com.ar"
@@ -40,7 +40,6 @@ class Footer extends React.Component {
               </a>
             </div>
           </Col>
-
         </Row>
       </footer>
     );

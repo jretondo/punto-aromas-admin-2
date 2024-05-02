@@ -54,7 +54,7 @@ const Ventas = ({
 
     const [modal1, setModal1] = useState(false)
 
-    const { totalPrecio, cancelarCompra, productsSellList, setProductsSellList } = useContext(productsSellContext)
+    const { totalPrecio, cancelarCompra, productsSellList } = useContext(productsSellContext)
 
     const cancelar = () => {
         swal({
@@ -155,6 +155,7 @@ const Ventas = ({
         let idAnt = -1
         let priceAnt = -1
         let newList = []
+        //  eslint-disable-next-line
         productsSellList.map((item) => {
             if (item.id_prod !== idAnt || item.price !== priceAnt) {
                 newList.push(item)

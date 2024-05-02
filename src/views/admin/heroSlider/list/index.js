@@ -7,16 +7,18 @@ import HeroSliderRow from './row';
 
 const ListHeroSlider = ({
     setIsOpenForm,
-    setHeroSliderData
+    setHeroSliderData,
+    setAlertar,
+    setMsgStrong,
+    setMsgGralAlert,
+    setSuccessAlert
 }) => {
     const [loading, setLoading] = useState(false)
-    const [pagina, setPagina] = useState(1)
     const [heroSliders, setHeroSliders] = useState([])
 
     const getList = async () => {
-
         setLoading(true)
-        await axios.get(UrlNodeServer.heroSliderDir.heroSlider + "/" + pagina, {
+        await axios.get(UrlNodeServer.heroSliderDir.heroSlider + "/" + 1, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('user-token')
             }
@@ -27,10 +29,16 @@ const ListHeroSlider = ({
                 const data = respuesta.body
                 setHeroSliders(data.data)
             } else {
-
+                setAlertar(true)
+                setMsgStrong("Error!")
+                setMsgGralAlert("No se pudo obtener la lista de Hero Sliders")
+                setSuccessAlert(false)
             }
         }).catch((error) => {
-
+            setAlertar(true)
+            setMsgStrong("Error!")
+            setMsgGralAlert("No se pudo obtener la lista de Hero Sliders")
+            setSuccessAlert(false)
         }).finally(() => {
             setLoading(false)
         })
@@ -38,8 +46,9 @@ const ListHeroSlider = ({
 
     useEffect(() => {
         getList()
-    }, [pagina])
-    console.log('heroSliders :>> ', heroSliders);
+        // eslint-disable-next-line
+    }, [])
+
     return (
         <>
             {

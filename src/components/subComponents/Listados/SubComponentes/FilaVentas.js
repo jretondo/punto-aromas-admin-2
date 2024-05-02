@@ -24,18 +24,19 @@ const FilaVentas = ({
 }) => {
 
     const [wait, setWait] = useState(false)
+    const [metodosToolTip, setMetodosToolTip] = useState(<></>)
     const [comprobante, setComprobante] = useState({
         pv: "00000",
         cbte: "00000000"
     })
     const [tooltp, setTooltp] = useState(false)
+    const [tooltp2, setTooltp2] = useState(false)
     const [modal1, setModal1] = useState(false)
     const [modal2, setModal2] = useState(false)
 
     const isAdmin = parseInt(localStorage.getItem("user-admin"))
 
     const getFact = async (idFact, send, type) => {
-        console.log('type :>> ', type);
         let query = ""
         let seguir = true
         if (send) {
@@ -154,10 +155,35 @@ const FilaVentas = ({
         setTooltp(!tooltp)
     }
 
+    const toggleToolTip2 = () => {
+        setTooltp2(!tooltp2)
+    }
+
+    const metodosToolTipGen = () => {
+        const metodos = item.metodos
+        if (metodos.length > 0) {
+            setMetodosToolTip(
+                metodos.map((metodo, index) => {
+                    return (
+                        <div key={index} className='p-0 m-0'>
+                            <p className='p-0 m-0' style={{ fontSize: "12px", fontWeight: "bold" }}>{metodo.tipo_txt}: ${formatMoney(metodo.importe)}</p>
+                        </div>
+                    )
+                })
+            )
+        }
+    }
+
+
     useEffect(() => {
         completarCeros()
         // eslint-disable-next-line
     }, [item.pv, item.cbte])
+
+    useEffect(() => {
+        item.metodos && metodosToolTipGen()
+        // eslint-disable-next-line
+    }, [item])
 
     return (
         <tr key={id} style={parseInt(item.id_fact_asoc) !== 0 ? { background: "#e8e8e8" } : {}}>
@@ -170,7 +196,7 @@ const FilaVentas = ({
             <td style={{ textAlign: "center" }}>
                 {item.letra} {comprobante.pv} - {comprobante.cbte}
             </td>
-            <td style={{ textAlign: "center" }}>
+            <td style={{ textAlign: "center" }} id={`metodo-descr-${item.id}`}>
                 {parseInt(item.forma_pago) === 0 ? "Efectivo" :
                     parseInt(item.forma_pago) === 1 ? "Mercado Pago" :
                         parseInt(item.forma_pago) === 2 ? "Débito" :
@@ -188,6 +214,13 @@ const FilaVentas = ({
                 <Tooltip placement="right" isOpen={tooltp} target={`buttonChange-${item.id}`} toggle={toggleToolTip}>
                     Cambiar Forma de Pago
                 </Tooltip>
+                {
+                    parseInt(item.forma_pago) === 5 ?
+                        <Tooltip placement="top" isOpen={tooltp2} target={`metodo-descr-${item.id}`} toggle={toggleToolTip2}>
+                            {metodosToolTip}
+                        </Tooltip>
+                        : null
+                }
             </td>
             <td style={{ textAlign: "center" }}>
                 $ {formatMoney(item.total_fact)}

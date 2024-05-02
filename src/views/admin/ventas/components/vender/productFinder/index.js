@@ -17,7 +17,6 @@ import productsSellContext from '../../../../../../context/productsSell';
 import isMobile from 'is-mobile';
 import ModalSearch from './modalSearch';
 import ModalPricesCant from './modalPricesCant';
-import ButtonOpenCollapse from 'components/buttonOpen';
 
 const ProductFinder = ({ clienteData, clienteBool }) => {
     const [result, setResult] = useState(null);
@@ -26,7 +25,6 @@ const ProductFinder = ({ clienteData, clienteBool }) => {
     const [camera, setCamera] = useState(false);
     const [prodSearchModal, setProdSearchModal] = useState(false)
     const [modalPrices, setModalPrices] = useState(false)
-    const [searchType, setSearchType] = useState(0)
 
     const { NewProdSell, productsSellList, error } = useContext(productsSellContext)
 
@@ -164,7 +162,7 @@ const ProductFinder = ({ clienteData, clienteBool }) => {
                 setCantProd={setCantProd}
                 clienteData={clienteData}
                 clienteBool={clienteBool}
-                searchType={searchType}
+                searchType={0}
             />
         </>
     )
